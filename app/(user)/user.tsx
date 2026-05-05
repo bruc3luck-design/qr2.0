@@ -1,15 +1,16 @@
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, RefreshControl } from "react-native"
-import { useEffect, useState } from "react"
-import { supabase } from "../../lib/supabase"
-import { router } from "expo-router"
-import { Ionicons } from "@expo/vector-icons"
-import { SafeAreaView } from "react-native-safe-area-context"
-import { UserBottomNav } from "../../components/user-bottom-nav"
-import { AppTheme } from "../../constants/theme"
-import { SectionHeader } from "../../components/ui/section-header"
-import { getLocalDateValue } from "../../lib/date"
-import { prepareNotifications, sendLocalNotification } from "../../lib/notifications"
-import { supabaseAdmin } from "../../lib/supabaseAdmin"
+import { router } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import { useEffect, useState } from "react";
+import { RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+import { AppButton } from "../../components/ui/app-button";
+import { AppCard } from "../../components/ui/app-card";
+import { SectionHeader } from "../../components/ui/section-header";
+import { UserBottomNav } from "../../components/user-bottom-nav";
+import { AppTheme } from "../../constants/theme";
+import { getLocalDateValue } from "../../lib/date";
+import { prepareNotifications, sendLocalNotification } from "../../lib/notifications";
 import {
   formatSubmissionTime,
   getDefaultAttendanceStatus,
@@ -17,24 +18,26 @@ import {
   getSubmissionStatusLabel,
   isTodaySubmission,
   PASSWORD_REQUEST_TYPE,
-} from "../../lib/pengajuan"
+} from "../../lib/pengajuan";
+import { supabase } from "../../lib/supabase";
+import { supabaseAdmin } from "../../lib/supabaseAdmin";
 
 type ProfileState = {
   name: string
   kelas: string
-}
+};
 
 type AttendanceState = {
   status: string
   waktu: string
-}
+};
 
 type SubmissionState = {
   id: string
   jenis: string
   status: string
   created_at: string
-}
+};
 
 const quickActions = [
   {
@@ -61,19 +64,22 @@ const quickActions = [
     icon: "checkmark-done-outline" as const,
     action: () => router.push("/status_kehadiran" as any),
   },
-]
+];
 
 export default function User() {
-  const [profile, setProfile] = useState<ProfileState>({ name: "", kelas: "-" })
-  const [attendance, setAttendance] = useState<AttendanceState>({ status: getDefaultAttendanceStatus(), waktu: "--:--" })
-  const [refreshing, setRefreshing] = useState(false)
-  const [todaySubmissions, setTodaySubmissions] = useState<SubmissionState[]>([])
+  const [profile, setProfile] = useState<ProfileState>({ name: "", kelas: "-" });
+  const [attendance, setAttendance] = useState<AttendanceState>({
+    status: getDefaultAttendanceStatus(),
+    waktu: "--:--",
+  });
+  const [refreshing, setRefreshing] = useState(false);
+  const [todaySubmissions, setTodaySubmissions] = useState<SubmissionState[]>([]);
 
   useEffect(() => {
-    prepareNotifications()
-    let profileChannel: any = null
-    let attendanceChannel: any = null
-    let submissionChannel: any = null
+    prepareNotifications();
+    let profileChannel: any = null;
+    let attendanceChannel: any = null;
+    let submissionChannel: any = null;
 
     const loadTodaySubmissions = async (userId: string) => {
       const { data: submissionData } = await supabaseAdmin
@@ -84,8 +90,8 @@ export default function User() {
         .order("created_at", { ascending: false })
 
       const filtered = (submissionData || []).filter((item) => isTodaySubmission(item.created_at))
-      setTodaySubmissions(filtered as SubmissionState[])
-    }
+      setTodaySubmissions(filtered as SubmissionState[]);
+    };
 
     const applyFallbackAttendance = () => {
       const fallbackStatus = getDefaultAttendanceStatus()
@@ -95,7 +101,7 @@ export default function User() {
           : prev
       )
       setTodaySubmissions((prev) => prev.filter((item) => isTodaySubmission(item.created_at)))
-    }
+    };
 
     const loadDashboard = async () => {
       const { data } = await supabase.auth.getUser()
@@ -187,16 +193,16 @@ export default function User() {
         .subscribe()
     }
 
-    loadDashboard()
-    const cutoffWatcher = setInterval(applyFallbackAttendance, 30000)
+    loadDashboard();
+    const cutoffWatcher = setInterval(applyFallbackAttendance, 30000);
 
     return () => {
-      clearInterval(cutoffWatcher)
-      if (profileChannel) supabase.removeChannel(profileChannel)
-      if (attendanceChannel) supabase.removeChannel(attendanceChannel)
-      if (submissionChannel) supabase.removeChannel(submissionChannel)
-    }
-  }, [])
+      clearInterval(cutoffWatcher);
+      if (profileChannel) supabase.removeChannel(profileChannel);
+      if (attendanceChannel) supabase.removeChannel(attendanceChannel);
+      if (submissionChannel) supabase.removeChannel(submissionChannel);
+    };
+  }, []);
 
   const onRefresh = async () => {
     setRefreshing(true)
@@ -243,19 +249,19 @@ export default function User() {
       const filtered = (submissionData || []).filter((item) => isTodaySubmission(item.created_at))
       setTodaySubmissions(filtered as SubmissionState[])
     }
-    setRefreshing(false)
-  }
+    setRefreshing(false);
+  };
 
-  const normalizedStatus = attendance.status.toLowerCase()
+  const normalizedStatus = attendance.status.toLowerCase();
 
   const statusColor =
     normalizedStatus === "hadir"
-      ? "#1e8c5d"
+      ? AppTheme.colors.success
       : normalizedStatus === "izin" || normalizedStatus === "sakit"
-        ? "#ba7412"
+        ? AppTheme.colors.warning
         : normalizedStatus === "tidak hadir"
           ? AppTheme.colors.danger
-          : "#22405f"
+          : AppTheme.colors.info;
 
   return (
     <SafeAreaView edges={["top"]} style={styles.screen}>
@@ -267,8 +273,9 @@ export default function User() {
       >
         <View style={styles.topRow}>
           <View style={styles.topCopy}>
+            <Text style={styles.eyebrow}>Student dashboard</Text>
             <Text style={styles.brand}>QRensi</Text>
-            <Text style={styles.subtitle}>Student dashboard</Text>
+            <Text style={styles.subtitle}>Ringkasan presensi, pengajuan, dan kartu QR dalam satu halaman.</Text>
           </View>
 
           <View style={styles.headerActions}>
@@ -276,24 +283,23 @@ export default function User() {
               <Ionicons
                 name={refreshing ? "hourglass-outline" : "refresh-outline"}
                 size={18}
-                color="#22405f"
+                color={AppTheme.colors.primary}
               />
             </TouchableOpacity>
-            <TouchableOpacity
+            <AppButton
+              label="Keluar"
+              icon="log-out-outline"
               onPress={async () => {
-                await supabase.auth.signOut()
-                router.replace("/login")
+                await supabase.auth.signOut();
+                router.replace("/login");
               }}
-              style={styles.logoutBtn}
-            >
-              <Ionicons name="log-out-outline" size={18} color="#FFFFFF" />
-              <Text style={styles.logoutText}>Keluar</Text>
-            </TouchableOpacity>
+              style={styles.logoutButton}
+            />
           </View>
         </View>
 
-        <View style={styles.profileCard}>
-          <View>
+        <AppCard style={styles.profileCard}>
+          <View style={styles.profileCopy}>
             <Text style={styles.mutedLabel}>Profil Siswa</Text>
             <Text style={styles.profileName}>{profile.name}</Text>
             <Text style={styles.profileMeta}>Kelas {profile.kelas}</Text>
@@ -301,9 +307,9 @@ export default function User() {
           <View style={styles.statusBadge}>
             <Text style={styles.statusBadgeText}>Aktif</Text>
           </View>
-        </View>
+        </AppCard>
 
-        <TouchableOpacity style={styles.noticeCard} onPress={() => router.push("/ajuan" as any)}>
+        <TouchableOpacity style={styles.noticeCard} onPress={() => router.push("/ajuan" as any)} activeOpacity={0.92}>
           <View style={styles.noticeHeader}>
             <Text style={styles.noticeTitle}>Riwayat Pengajuan Hari Ini</Text>
             <Text style={styles.noticeMeta}>{todaySubmissions.length} item</Text>
@@ -316,7 +322,7 @@ export default function User() {
             todaySubmissions.map((item) => (
               <View key={item.id} style={styles.noticeItem}>
                 <View style={styles.noticeIconWrap}>
-                  <Ionicons name="document-text-outline" size={16} color="#16324f" />
+                  <Ionicons name="document-text-outline" size={16} color={AppTheme.colors.primary} />
                 </View>
                 <View style={styles.noticeCopy}>
                   <Text style={styles.noticeItemTitle}>{getSubmissionDisplayType(item.jenis)}</Text>
@@ -335,6 +341,7 @@ export default function User() {
         <TouchableOpacity
           style={styles.heroCard}
           onPress={() => router.push("/status_kehadiran" as any)}
+          activeOpacity={0.94}
         >
           <View style={styles.heroTop}>
             <Text style={styles.heroLabel}>Kehadiran hari ini</Text>
@@ -358,9 +365,10 @@ export default function User() {
                 key={item.title}
                 style={styles.quickCard}
                 onPress={item.action}
+                activeOpacity={0.92}
               >
                 <View style={styles.quickIconWrap}>
-                  <Ionicons name={item.icon} size={18} color="#22405f" />
+                  <Ionicons name={item.icon} size={18} color={AppTheme.colors.primary} />
                 </View>
                 <Text style={styles.quickTitle}>{item.title}</Text>
                 <Text style={styles.quickDescription}>{item.description}</Text>
@@ -369,7 +377,7 @@ export default function User() {
           </View>
         </View>
 
-        <View style={styles.detailCard}>
+        <AppCard tone="muted" style={styles.detailCard}>
           <Text style={styles.detailTitle}>Ringkasan Hari Ini</Text>
           <View style={styles.detailRow}>
             <Text style={styles.detailLabel}>Status</Text>
@@ -383,12 +391,11 @@ export default function User() {
             <Text style={styles.detailLabel}>Metode</Text>
             <Text style={styles.detailValue}>Scan QR</Text>
           </View>
-        </View>
-
+        </AppCard>
       </ScrollView>
       <UserBottomNav activeKey="user" />
     </SafeAreaView>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -400,16 +407,16 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentContainer: {
-    paddingHorizontal: AppTheme.spacing.lg,
-    paddingTop: AppTheme.spacing.md,
-    paddingBottom: 28,
+    paddingHorizontal: AppTheme.spacing["2xl"],
+    paddingTop: AppTheme.spacing.lg,
+    paddingBottom: AppTheme.spacing["3xl"],
   },
   topRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    gap: 12,
-    marginBottom: 14,
+    gap: AppTheme.spacing.md,
+    marginBottom: AppTheme.spacing.lg,
     flexWrap: "wrap",
   },
   topCopy: {
@@ -423,79 +430,76 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     justifyContent: "flex-end",
   },
+  eyebrow: {
+    ...AppTheme.typography.eyebrow,
+    color: AppTheme.colors.primary,
+    marginBottom: AppTheme.spacing.xs,
+  },
   brand: {
     ...AppTheme.typography.display,
   },
   subtitle: {
-    marginTop: 4,
-    fontSize: 13,
+    ...AppTheme.typography.bodySm,
+    marginTop: AppTheme.spacing.xs,
     color: AppTheme.colors.textMuted,
   },
   iconButton: {
-    width: 42,
-    height: 42,
+    width: 44,
+    height: 44,
     borderRadius: AppTheme.radius.sm,
-    backgroundColor: AppTheme.colors.primarySoft,
+    backgroundColor: AppTheme.colors.backgroundMuted,
+    borderWidth: 1,
+    borderColor: AppTheme.colors.border,
     justifyContent: "center",
     alignItems: "center",
-    position: "relative",
   },
-  logoutBtn: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    backgroundColor: AppTheme.colors.primary,
-    paddingHorizontal: 14,
-    paddingVertical: 11,
-    borderRadius: AppTheme.radius.sm,
-  },
-  logoutText: {
-    color: AppTheme.colors.white,
-    fontWeight: "700",
+  logoutButton: {
+    minWidth: 120,
   },
   profileCard: {
-    backgroundColor: AppTheme.colors.surface,
-    borderRadius: AppTheme.radius.lg,
-    padding: 18,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    borderWidth: 1,
-    borderColor: AppTheme.colors.border,
+    gap: AppTheme.spacing.md,
+  },
+  profileCopy: {
+    flex: 1,
   },
   noticeCard: {
     backgroundColor: AppTheme.colors.surface,
     borderRadius: AppTheme.radius.lg,
-    padding: 16,
-    marginTop: 16,
+    padding: AppTheme.spacing.xl,
+    marginTop: AppTheme.spacing.lg,
     borderWidth: 1,
     borderColor: AppTheme.colors.border,
+    ...AppTheme.shadow.sm,
   },
   noticeHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 12,
+    marginBottom: AppTheme.spacing.md,
   },
   noticeIconWrap: {
-    width: 38,
-    height: 38,
+    width: 40,
+    height: 40,
     borderRadius: AppTheme.radius.sm,
-    backgroundColor: AppTheme.colors.accentSoft,
+    backgroundColor: AppTheme.colors.primarySoft,
     justifyContent: "center",
     alignItems: "center",
   },
   noticeMeta: {
     color: AppTheme.colors.primary,
+    fontFamily: AppTheme.fonts.semibold,
     fontSize: 12,
-    fontWeight: "800",
+    lineHeight: 18,
   },
   noticeItem: {
     flexDirection: "row",
     alignItems: "flex-start",
-    gap: 12,
-    paddingTop: 12,
-    paddingBottom: 2,
+    gap: AppTheme.spacing.md,
+    paddingTop: AppTheme.spacing.md,
+    paddingBottom: AppTheme.spacing.xs,
     borderTopWidth: 1,
     borderTopColor: AppTheme.colors.border,
   },
@@ -503,105 +507,100 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   noticeTitle: {
-    color: AppTheme.colors.text,
-    fontSize: 14,
-    fontWeight: "800",
+    ...AppTheme.typography.titleSm,
   },
   noticeText: {
-    color: AppTheme.colors.textMuted,
-    fontSize: 12,
-    lineHeight: 18,
+    ...AppTheme.typography.bodySm,
   },
   noticeItemTitle: {
-    color: AppTheme.colors.text,
-    fontSize: 14,
-    fontWeight: "800",
-    marginBottom: 3,
+    ...AppTheme.typography.bodyStrong,
+    marginBottom: 2,
   },
   noticeEmpty: {
-    color: AppTheme.colors.textMuted,
-    fontSize: 12,
-    lineHeight: 18,
+    ...AppTheme.typography.bodySm,
   },
   mutedLabel: {
-    fontSize: 12,
+    ...AppTheme.typography.label,
     color: AppTheme.colors.textMuted,
-    marginBottom: 6,
+    marginBottom: AppTheme.spacing.xs,
   },
   profileName: {
-    fontSize: 23,
-    fontWeight: "800",
-    color: AppTheme.colors.text,
+    ...AppTheme.typography.title,
   },
   profileMeta: {
-    marginTop: 4,
+    ...AppTheme.typography.bodySm,
+    marginTop: AppTheme.spacing.xs,
     color: AppTheme.colors.textMuted,
-    fontSize: 13,
   },
   statusBadge: {
     backgroundColor: AppTheme.colors.primarySoft,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingHorizontal: AppTheme.spacing.md,
+    paddingVertical: AppTheme.spacing.sm,
     borderRadius: AppTheme.radius.pill,
   },
   statusBadgeText: {
     color: AppTheme.colors.primary,
-    fontWeight: "700",
+    fontFamily: AppTheme.fonts.semibold,
     fontSize: 12,
+    lineHeight: 18,
   },
   heroCard: {
     backgroundColor: AppTheme.colors.primary,
     borderRadius: AppTheme.radius.xl,
-    padding: 18,
+    padding: AppTheme.spacing.xl,
     minHeight: 160,
     justifyContent: "space-between",
-    marginTop: 16,
+    marginTop: AppTheme.spacing.lg,
+    ...AppTheme.shadow.md,
   },
   heroTop: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 14,
-    gap: 10,
+    marginBottom: AppTheme.spacing.lg,
+    gap: AppTheme.spacing.sm,
   },
   heroLabel: {
-    color: AppTheme.colors.primarySoft,
-    fontSize: 13,
-    fontWeight: "600",
+    ...AppTheme.typography.label,
+    color: "#D2E1EF",
   },
   heroTime: {
     color: "#b2c6db",
+    fontFamily: AppTheme.fonts.medium,
     fontSize: 12,
+    lineHeight: 18,
     textAlign: "right",
   },
   heroStatusPill: {
     alignSelf: "flex-start",
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingHorizontal: AppTheme.spacing.lg,
+    paddingVertical: AppTheme.spacing.md,
     borderRadius: AppTheme.radius.pill,
     backgroundColor: AppTheme.colors.primaryMuted,
   },
   heroStatusText: {
     color: AppTheme.colors.white,
+    fontFamily: AppTheme.fonts.bold,
     fontSize: 18,
-    fontWeight: "800",
+    lineHeight: 24,
     textTransform: "capitalize",
   },
   heroHelper: {
-    marginTop: 12,
+    marginTop: AppTheme.spacing.md,
     color: "#bdd0e2",
+    fontFamily: AppTheme.fonts.regular,
     fontSize: 12,
     lineHeight: 18,
   },
   quickSection: {
-    marginTop: 18,
+    marginTop: AppTheme.spacing.xl,
   },
   quickGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
-    rowGap: 12,
-    columnGap: 10,
+    rowGap: AppTheme.spacing.md,
+    columnGap: AppTheme.spacing.md,
   },
   quickCard: {
     flexBasis: "48%",
@@ -609,58 +608,48 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     backgroundColor: AppTheme.colors.surface,
     borderRadius: AppTheme.radius.lg,
-    padding: 16,
+    padding: AppTheme.spacing.lg,
     minHeight: 132,
     borderWidth: 1,
     borderColor: AppTheme.colors.border,
+    ...AppTheme.shadow.sm,
   },
   quickIconWrap: {
-    width: 34,
-    height: 34,
+    width: 40,
+    height: 40,
     borderRadius: AppTheme.radius.sm,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: AppTheme.colors.primarySoft,
-    marginBottom: 12,
+    marginBottom: AppTheme.spacing.md,
   },
   quickTitle: {
-    color: AppTheme.colors.text,
-    fontSize: 15,
-    fontWeight: "800",
+    ...AppTheme.typography.titleSm,
   },
   quickDescription: {
-    color: AppTheme.colors.textMuted,
-    lineHeight: 17,
-    fontSize: 12,
-    marginTop: 6,
+    ...AppTheme.typography.bodySm,
+    marginTop: AppTheme.spacing.xs,
   },
   detailCard: {
-    backgroundColor: AppTheme.colors.surface,
-    borderRadius: AppTheme.radius.xl,
-    padding: 18,
-    borderWidth: 1,
-    borderColor: AppTheme.colors.border,
-    marginTop: 18,
+    marginTop: AppTheme.spacing.xl,
+    gap: AppTheme.spacing.xs,
   },
   detailTitle: {
-    fontSize: 18,
-    fontWeight: "800",
-    color: AppTheme.colors.text,
-    marginBottom: 12,
+    ...AppTheme.typography.titleSm,
+    marginBottom: AppTheme.spacing.sm,
   },
   detailRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingVertical: 8,
+    paddingVertical: AppTheme.spacing.sm,
     borderBottomWidth: 1,
     borderBottomColor: AppTheme.colors.border,
   },
   detailLabel: {
-    color: AppTheme.colors.textMuted,
+    ...AppTheme.typography.bodySm,
   },
   detailValue: {
-    color: AppTheme.colors.text,
-    fontWeight: "700",
+    ...AppTheme.typography.bodyStrong,
     textTransform: "capitalize",
   },
-})
+});

@@ -421,7 +421,7 @@ export default function Ajuan() {
         ? styles.statusRejected
         : styles.statusPending;
 
-  if (loadingUser) return <ActivityIndicator size="large" style={{ flex: 1 }} color="#6D3BFF" />;
+  if (loadingUser) return <ActivityIndicator size="large" style={{ flex: 1 }} color={AppTheme.colors.primary} />;
 
   return (
     <ScreenShell
@@ -590,52 +590,47 @@ export default function Ajuan() {
 
 const styles = StyleSheet.create({
   shell: {
-    paddingBottom: 8,
-    gap: 14,
+    gap: AppTheme.spacing.lg,
   },
   userInfo: {
-    padding: 18,
+    padding: AppTheme.spacing.xl,
     backgroundColor: AppTheme.colors.surface,
     borderRadius: AppTheme.radius.lg,
     borderWidth: 1,
     borderColor: AppTheme.colors.border,
+    ...AppTheme.shadow.sm,
   },
   userLabel: {
-    color: AppTheme.colors.textMuted,
-    fontSize: 12,
-    marginBottom: 4,
+    ...AppTheme.typography.label,
+    marginBottom: AppTheme.spacing.xs,
   },
   userValue: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: AppTheme.colors.text,
+    ...AppTheme.typography.titleSm,
   },
   sectionCard: {
-    padding: 18,
+    padding: AppTheme.spacing.xl,
     backgroundColor: AppTheme.colors.surface,
     borderRadius: AppTheme.radius.lg,
     borderWidth: 1,
     borderColor: AppTheme.colors.border,
+    ...AppTheme.shadow.sm,
   },
   sectionTitle: {
-    color: AppTheme.colors.text,
-    fontSize: 18,
-    fontWeight: "800",
+    ...AppTheme.typography.titleSm,
   },
   sectionHint: {
-    color: AppTheme.colors.textMuted,
-    marginTop: 6,
-    marginBottom: 16,
-    lineHeight: 20,
+    ...AppTheme.typography.bodySm,
+    marginTop: AppTheme.spacing.xs,
+    marginBottom: AppTheme.spacing.lg,
   },
   statusCard: {
     borderWidth: 1,
     borderColor: AppTheme.colors.border,
     borderRadius: AppTheme.radius.lg,
-    padding: 14,
+    padding: AppTheme.spacing.lg,
     backgroundColor: AppTheme.colors.surfaceMuted,
-    marginBottom: 18,
-    gap: 10,
+    marginBottom: AppTheme.spacing.xl,
+    gap: AppTheme.spacing.sm,
   },
   statusHeaderRow: {
     flexDirection: "row",
@@ -645,17 +640,14 @@ const styles = StyleSheet.create({
   },
   statusTitle: {
     color: AppTheme.colors.text,
-    fontWeight: "800",
-    fontSize: 15,
+    ...AppTheme.typography.bodyStrong,
   },
   statusMeta: {
-    color: AppTheme.colors.textMuted,
-    fontSize: 12,
-    marginTop: 4,
+    ...AppTheme.typography.bodySm,
+    marginTop: AppTheme.spacing.xs,
   },
   statusNote: {
-    color: AppTheme.colors.text,
-    lineHeight: 20,
+    ...AppTheme.typography.body,
   },
   statusBadge: {
     borderRadius: AppTheme.radius.pill,
@@ -686,23 +678,21 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   secondaryButtonText: {
+    ...AppTheme.typography.bodyStrong,
     color: AppTheme.colors.primary,
-    fontWeight: "700",
   },
   label: {
-    fontSize: 14,
-    marginBottom: 10,
-    fontWeight: "700",
-    color: AppTheme.colors.text,
+    ...AppTheme.typography.bodyStrong,
+    marginBottom: AppTheme.spacing.sm,
   },
   buttonRow: {
     flexDirection: "row",
-    marginBottom: 15,
+    marginBottom: AppTheme.spacing.lg,
   },
   jenisButton: {
     flex: 1,
-    paddingVertical: 14,
-    marginHorizontal: 5,
+    paddingVertical: AppTheme.spacing.md,
+    marginHorizontal: AppTheme.spacing.xs,
     borderRadius: AppTheme.radius.md,
     backgroundColor: AppTheme.colors.surface,
     alignItems: "center",
@@ -714,76 +704,75 @@ const styles = StyleSheet.create({
     borderColor: AppTheme.colors.primary,
   },
   jenisText: {
-    fontSize: 16,
+    ...AppTheme.typography.body,
     color: AppTheme.colors.textMuted,
   },
   jenisTextSelected: {
     color: AppTheme.colors.white,
-    fontWeight: "bold",
+    fontFamily: AppTheme.fonts.semibold,
   },
   input: {
     borderWidth: 1,
     borderColor: AppTheme.colors.border,
     borderRadius: AppTheme.radius.lg,
-    padding: 15,
+    padding: AppTheme.spacing.lg,
     backgroundColor: AppTheme.colors.surface,
-    marginBottom: 20,
+    marginBottom: AppTheme.spacing.xl,
     textAlignVertical: "top",
     minHeight: 120,
     color: AppTheme.colors.text,
+    fontFamily: AppTheme.fonts.regular,
+    fontSize: 14,
+    lineHeight: 22,
   },
   photoPicker: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 8,
+    gap: AppTheme.spacing.sm,
     backgroundColor: AppTheme.colors.primarySoft,
     borderRadius: AppTheme.radius.md,
-    paddingVertical: 14,
-    marginBottom: 14,
+    paddingVertical: AppTheme.spacing.md,
+    marginBottom: AppTheme.spacing.md,
   },
   photoPickerText: {
+    ...AppTheme.typography.bodyStrong,
     color: AppTheme.colors.primary,
-    fontWeight: "700",
   },
   photoHelperText: {
+    ...AppTheme.typography.bodySm,
     marginTop: -4,
-    marginBottom: 12,
-    color: AppTheme.colors.textMuted,
-    fontSize: 12,
+    marginBottom: AppTheme.spacing.md,
   },
   previewImage: {
     width: "100%",
     height: 220,
     borderRadius: AppTheme.radius.lg,
-    marginBottom: 20,
+    marginBottom: AppTheme.spacing.xl,
     backgroundColor: AppTheme.colors.surface,
   },
   cancelButton: {
     borderWidth: 1,
     borderColor: AppTheme.colors.borderStrong,
-    paddingVertical: 13,
+    paddingVertical: AppTheme.spacing.md,
     borderRadius: AppTheme.radius.md,
     alignItems: "center",
-    marginBottom: 10,
+    marginBottom: AppTheme.spacing.sm,
     backgroundColor: AppTheme.colors.surface,
   },
   cancelButtonText: {
-    color: AppTheme.colors.text,
-    fontWeight: "700",
+    ...AppTheme.typography.bodyStrong,
   },
   submitButton: {
     backgroundColor: AppTheme.colors.primary,
-    paddingVertical: 15,
+    paddingVertical: AppTheme.spacing.lg,
     borderRadius: AppTheme.radius.md,
     alignItems: "center",
   },
   submitDisabled: {
-    backgroundColor: "#aaa",
+    backgroundColor: AppTheme.colors.textSoft,
   },
   submitText: {
-    color: AppTheme.colors.white,
-    fontSize: 16,
-    fontWeight: "bold",
+    ...AppTheme.typography.button,
   },
 });

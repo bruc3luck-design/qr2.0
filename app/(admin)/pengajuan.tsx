@@ -265,7 +265,7 @@ export default function PengajuanAdmin() {
     setRefreshing(false);
   };
 
-  if (loading) return <ActivityIndicator size="large" style={{ flex: 1 }} color="#6D3BFF" />;
+  if (loading) return <ActivityIndicator size="large" style={{ flex: 1 }} color={AppTheme.colors.primary} />;
 
   return (
     <ScreenShell
@@ -358,71 +358,73 @@ export default function PengajuanAdmin() {
 }
 
 const styles = StyleSheet.create({
-  shell: { paddingBottom: 8 },
-  noDataText: { textAlign: "center", fontSize: 16, color: AppTheme.colors.textMuted },
+  shell: { gap: AppTheme.spacing.lg },
+  noDataText: { ...AppTheme.typography.body, textAlign: "center", color: AppTheme.colors.textMuted },
   card: {
     backgroundColor: AppTheme.colors.surface,
-    padding: 16,
+    padding: AppTheme.spacing.xl,
     borderRadius: AppTheme.radius.lg,
-    marginVertical: 8,
+    gap: AppTheme.spacing.sm,
     borderWidth: 1,
     borderColor: AppTheme.colors.border,
+    ...AppTheme.shadow.sm,
   },
-  topBadgeRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 8, gap: 10 },
-  userName: { fontSize: 18, fontWeight: "800", color: AppTheme.colors.text, flex: 1 },
-  typePill: { backgroundColor: AppTheme.colors.primarySoft, paddingHorizontal: 12, paddingVertical: 6, borderRadius: AppTheme.radius.pill },
-  typePillText: { color: AppTheme.colors.primary, fontWeight: "700" },
-  userInfo: { fontSize: 13, marginBottom: 6, color: AppTheme.colors.textMuted },
-  userInfoStrong: { fontSize: 13, marginBottom: 8, color: AppTheme.colors.text, fontWeight: "700" },
-  keterangan: { fontSize: 15, marginBottom: 12, color: AppTheme.colors.text, lineHeight: 20 },
+  topBadgeRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", gap: AppTheme.spacing.sm },
+  userName: { ...AppTheme.typography.titleSm, flex: 1 },
+  typePill: { backgroundColor: AppTheme.colors.primarySoft, paddingHorizontal: AppTheme.spacing.md, paddingVertical: AppTheme.spacing.sm, borderRadius: AppTheme.radius.pill },
+  typePillText: { ...AppTheme.typography.bodyStrong, color: AppTheme.colors.primary },
+  userInfo: { ...AppTheme.typography.bodySm, color: AppTheme.colors.textMuted },
+  userInfoStrong: { ...AppTheme.typography.bodyStrong, marginBottom: AppTheme.spacing.xs },
+  keterangan: { ...AppTheme.typography.body, marginBottom: AppTheme.spacing.sm },
   statusPill: {
     alignSelf: "flex-start",
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: AppTheme.radius.pill,
-    marginBottom: 14,
+    marginBottom: AppTheme.spacing.sm,
   },
   statusPillText: {
-    fontWeight: "800",
+    fontFamily: AppTheme.fonts.semibold,
     fontSize: 12,
+    lineHeight: 18,
   },
   proofButton: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: AppTheme.spacing.sm,
     backgroundColor: AppTheme.colors.primarySoft,
     alignSelf: "flex-start",
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+    paddingHorizontal: AppTheme.spacing.md,
+    paddingVertical: AppTheme.spacing.md,
     borderRadius: AppTheme.radius.sm,
-    marginBottom: 14,
+    marginBottom: AppTheme.spacing.sm,
   },
-  proofButtonText: { color: AppTheme.colors.primary, fontWeight: "700" },
-  noProofText: { color: AppTheme.colors.textMuted, marginBottom: 14 },
+  proofButtonText: { ...AppTheme.typography.bodyStrong, color: AppTheme.colors.primary },
+  noProofText: { ...AppTheme.typography.bodySm, marginBottom: AppTheme.spacing.sm },
   buttonRow: { flexDirection: "row", justifyContent: "space-between" },
   approveButton: {
     flex: 1,
     backgroundColor: AppTheme.colors.success,
-    paddingVertical: 12,
+    paddingVertical: AppTheme.spacing.md,
     borderRadius: AppTheme.radius.sm,
     alignItems: "center",
-    marginRight: 5,
+    marginRight: AppTheme.spacing.xs,
   },
   rejectButton: {
     flex: 1,
     backgroundColor: AppTheme.colors.danger,
-    paddingVertical: 12,
+    paddingVertical: AppTheme.spacing.md,
     borderRadius: AppTheme.radius.sm,
     alignItems: "center",
-    marginLeft: 5,
+    marginLeft: AppTheme.spacing.xs,
   },
-  buttonText: { color: AppTheme.colors.white, fontWeight: "bold", fontSize: 16 },
-  disabledButton: { backgroundColor: "#aaa" },
+  buttonText: { ...AppTheme.typography.button },
+  disabledButton: { backgroundColor: AppTheme.colors.textSoft },
   modalOverlay: {
     flex: 1,
     backgroundColor: AppTheme.colors.overlay,
     justifyContent: "center",
-    padding: 20,
+    padding: AppTheme.spacing.xl,
   },
   modalClose: {
     alignSelf: "flex-end",
@@ -432,7 +434,7 @@ const styles = StyleSheet.create({
     backgroundColor: AppTheme.colors.primarySoft,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 12,
+    marginBottom: AppTheme.spacing.md,
   },
   previewImage: {
     width: "100%",

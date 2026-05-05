@@ -40,8 +40,9 @@ export function InfoCard({
 const styles = StyleSheet.create({
   base: {
     borderRadius: AppTheme.radius.xl,
-    padding: AppTheme.spacing.lg,
+    padding: AppTheme.spacing.xl,
     marginBottom: AppTheme.spacing.lg,
+    ...AppTheme.shadow.sm,
   },
   primary: {
     backgroundColor: AppTheme.colors.primary,
@@ -61,8 +62,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    fontSize: 15,
-    fontWeight: "800",
+    ...AppTheme.typography.titleSm,
   },
   titlePrimary: {
     color: AppTheme.colors.white,
@@ -71,12 +71,11 @@ const styles = StyleSheet.create({
     color: AppTheme.colors.text,
   },
   description: {
-    marginTop: AppTheme.spacing.xs,
-    fontSize: 12,
-    lineHeight: 18,
+    marginTop: AppTheme.spacing.sm,
+    ...AppTheme.typography.bodySm,
   },
   descriptionPrimary: {
-    color: AppTheme.colors.primarySoft,
+    color: "#D9E8F6",
   },
   descriptionSurface: {
     color: AppTheme.colors.textMuted,

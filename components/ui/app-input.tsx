@@ -33,7 +33,7 @@ export function AppInput({ style, trailingIcon, onTrailingPress, ...props }: Pro
 
 const styles = StyleSheet.create({
   wrap: {
-    minHeight: 56,
+    minHeight: 58,
     flexDirection: "row",
     alignItems: "center",
     gap: AppTheme.spacing.sm,
@@ -42,12 +42,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: AppTheme.colors.border,
     paddingHorizontal: AppTheme.spacing.lg,
+    ...AppTheme.shadow.sm,
   },
   input: {
     flex: 1,
-    minHeight: 56,
+    minHeight: 58,
     color: AppTheme.colors.text,
+    fontFamily: AppTheme.fonts.medium,
     fontSize: 15,
-    fontWeight: "600",
+    lineHeight: 22,
   },
 });

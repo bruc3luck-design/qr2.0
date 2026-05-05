@@ -33,13 +33,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    color: AppTheme.colors.text,
-    fontSize: 15,
-    fontWeight: "800",
+    ...AppTheme.typography.titleSm,
   },
   hint: {
-    color: AppTheme.colors.textMuted,
-    fontSize: 12,
+    ...AppTheme.typography.bodySm,
     marginTop: AppTheme.spacing.xs,
   },
 });

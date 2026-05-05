@@ -36,16 +36,18 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
     alignItems: "center",
-    gap: AppTheme.spacing.md,
-    marginBottom: AppTheme.spacing.xl,
+    gap: AppTheme.spacing.lg,
+    marginBottom: AppTheme.spacing["2xl"],
   },
   backButton: {
-    width: 40,
-    height: 40,
+    width: 44,
+    height: 44,
     borderRadius: AppTheme.radius.sm,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: AppTheme.colors.primarySoft,
+    backgroundColor: AppTheme.colors.backgroundMuted,
+    borderWidth: 1,
+    borderColor: AppTheme.colors.border,
   },
   textWrap: {
     flex: 1,
@@ -58,7 +60,7 @@ const styles = StyleSheet.create({
     ...AppTheme.typography.title,
   },
   placeholder: {
-    width: 40,
-    height: 40,
+    width: 44,
+    height: 44,
   },
 });

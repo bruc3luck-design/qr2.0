@@ -1,20 +1,21 @@
-import { View, Text, StyleSheet } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { useState } from "react";
-import { supabaseAdmin } from "../../lib/supabaseAdmin";
+
 import { AdminBottomNav } from "../../components/admin-bottom-nav";
+import { supabaseAdmin } from "../../lib/supabaseAdmin";
 import { useFeatureBack } from "../../hooks/use-feature-back";
 import { getLocalDateValue } from "../../lib/date";
 import { AppTheme } from "../../constants/theme";
 import { AppButton } from "../../components/ui/app-button";
+import { AppCard } from "../../components/ui/app-card";
 import { InfoCard } from "../../components/ui/info-card";
 import { PageHeader } from "../../components/ui/page-header";
 import { ScreenShell } from "../../components/ui/screen-shell";
 import { getSubmissionCutoffLabel, isPastSubmissionCutoff } from "../../lib/pengajuan";
 
 export default function Scanner() {
-
   const [permission, requestPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState(false);
   const [statusText, setStatusText] = useState("");
@@ -27,11 +28,16 @@ export default function Scanner() {
   if (!permission.granted) {
     return (
       <View style={styles.permissionScreen}>
-        <View style={styles.permissionCard}>
-          <Ionicons name="camera-outline" size={80} color="#4C6EF5" />
-          <Text style={styles.permissionText}>Akses kamera diperlukan</Text>
+        <AppCard style={styles.permissionCard}>
+          <View style={styles.permissionIcon}>
+            <Ionicons name="camera-outline" size={34} color={AppTheme.colors.primary} />
+          </View>
+          <Text style={styles.permissionTitle}>Akses kamera diperlukan</Text>
+          <Text style={styles.permissionText}>
+            Izinkan kamera agar admin dapat memindai kartu QR siswa secara langsung dari dashboard.
+          </Text>
           <AppButton label="Izinkan Kamera" onPress={requestPermission} style={styles.permissionButton} />
-        </View>
+        </AppCard>
       </View>
     );
   }
@@ -41,7 +47,7 @@ export default function Scanner() {
 
     if (attendanceClosed) {
       setStatusText(`Waktu kehadiran sudah habis. Scan hanya tersedia sampai jam ${getSubmissionCutoffLabel()}.`);
-      setStatusColor("#FA5252");
+      setStatusColor(AppTheme.colors.danger);
       return;
     }
 
@@ -49,7 +55,7 @@ export default function Scanner() {
 
     if (!uid) {
       setStatusText("QR tidak valid");
-      setStatusColor("#FA5252");
+      setStatusColor(AppTheme.colors.danger);
       return;
     }
 
@@ -61,7 +67,7 @@ export default function Scanner() {
 
     if (profileError || !profile) {
       setStatusText("User tidak ditemukan");
-      setStatusColor("#FA5252");
+      setStatusColor(AppTheme.colors.danger);
       return;
     }
 
@@ -76,14 +82,14 @@ export default function Scanner() {
 
     if (cekError) {
       setStatusText("Gagal memeriksa absensi");
-      setStatusColor("#FA5252");
+      setStatusColor(AppTheme.colors.danger);
       return;
     }
 
     if (cek) {
       if (cek.status === "hadir") {
         setStatusText(profile.nama + " sudah hadir hari ini");
-        setStatusColor("#FAB005");
+        setStatusColor(AppTheme.colors.warning);
         return;
       }
 
@@ -95,12 +101,12 @@ export default function Scanner() {
 
       if (updateError) {
         setStatusText("Gagal memperbarui absensi");
-        setStatusColor("#FA5252");
+        setStatusColor(AppTheme.colors.danger);
         return;
       }
 
       setStatusText(profile.nama + " berhasil diubah menjadi hadir");
-      setStatusColor("#40C057");
+      setStatusColor(AppTheme.colors.success);
       return;
     }
 
@@ -119,19 +125,17 @@ export default function Scanner() {
 
     if (error) {
       setStatusText("Gagal menyimpan absensi");
-      setStatusColor("#FA5252");
+      setStatusColor(AppTheme.colors.danger);
     } else {
       setStatusText(profile.nama + " berhasil absen");
-      setStatusColor("#40C057");
+      setStatusColor(AppTheme.colors.success);
     }
   };
 
   return (
     <ScreenShell viewProps={{ style: styles.container }} footer={<AdminBottomNav activeKey="scanner" />}>
-      
-        <View style={styles.header}>
-          <PageHeader eyebrow="Pemindaian cepat" title="Scan QR Absensi" onBackPress={handleBack} />
-        </View>
+      <View style={styles.shell}>
+        <PageHeader eyebrow="Pemindaian cepat" title="Scan QR Absensi" onBackPress={handleBack} />
 
         <InfoCard
           title="Arahkan kamera ke kartu QR siswa"
@@ -179,7 +183,7 @@ export default function Scanner() {
             }}
           />
         )}
-
+      </View>
     </ScreenShell>
   );
 }
@@ -187,25 +191,27 @@ export default function Scanner() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingBottom: 16,
+    paddingBottom: AppTheme.spacing.lg,
   },
-  header: {
-    marginBottom: 16,
+  shell: {
+    flex: 1,
+    gap: AppTheme.spacing.lg,
   },
   cameraContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     overflow: "hidden",
-    borderRadius: 26,
+    borderRadius: AppTheme.radius.xl,
     backgroundColor: AppTheme.colors.surface,
     borderWidth: 1,
     borderColor: AppTheme.colors.border,
+    ...AppTheme.shadow.sm,
   },
   camera: {
     width: "100%",
     height: "100%",
-    borderRadius: 26,
+    borderRadius: AppTheme.radius.xl,
   },
   scanFrame: {
     position: "absolute",
@@ -213,7 +219,7 @@ const styles = StyleSheet.create({
     height: 250,
     borderWidth: 3,
     borderColor: AppTheme.colors.primarySoft,
-    borderRadius: 24,
+    borderRadius: AppTheme.radius.lg,
   },
   closedState: {
     width: "100%",
@@ -223,50 +229,59 @@ const styles = StyleSheet.create({
     paddingHorizontal: 28,
   },
   closedTitle: {
-    marginTop: 16,
-    color: AppTheme.colors.text,
-    fontSize: 22,
-    fontWeight: "800",
+    ...AppTheme.typography.title,
+    marginTop: AppTheme.spacing.lg,
     textAlign: "center",
   },
   closedText: {
-    marginTop: 10,
-    color: AppTheme.colors.textMuted,
+    ...AppTheme.typography.body,
+    marginTop: AppTheme.spacing.sm,
     textAlign: "center",
-    lineHeight: 21,
   },
   statusBox: {
-    padding: 15,
-    marginTop: 16,
+    padding: AppTheme.spacing.lg,
     borderRadius: AppTheme.radius.md,
     alignItems: "center",
+    ...AppTheme.shadow.sm,
   },
   statusText: {
     color: AppTheme.colors.white,
-    fontWeight: "bold",
-    fontSize: 16,
+    fontFamily: AppTheme.fonts.semibold,
+    fontSize: 15,
+    lineHeight: 22,
+    textAlign: "center",
   },
   button: {
-    marginTop: 16,
+    marginTop: "auto",
   },
   permissionButton: {
     alignSelf: "stretch",
   },
   permissionScreen: {
     flex: 1,
-    backgroundColor: AppTheme.colors.primary,
-    padding: 20,
+    backgroundColor: AppTheme.colors.background,
+    padding: AppTheme.spacing.xl,
     justifyContent: "center",
   },
   permissionCard: {
-    backgroundColor: AppTheme.colors.background,
-    borderRadius: AppTheme.radius.xl,
-    padding: 24,
     alignItems: "center",
+    gap: AppTheme.spacing.md,
+  },
+  permissionIcon: {
+    width: 68,
+    height: 68,
+    borderRadius: AppTheme.radius.lg,
+    backgroundColor: AppTheme.colors.primarySoft,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  permissionTitle: {
+    ...AppTheme.typography.titleSm,
+    textAlign: "center",
   },
   permissionText: {
-    fontSize: 16,
-    marginVertical: 20,
-    color: AppTheme.colors.text,
+    ...AppTheme.typography.body,
+    color: AppTheme.colors.textMuted,
+    textAlign: "center",
   },
 });

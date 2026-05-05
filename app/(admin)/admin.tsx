@@ -4,6 +4,8 @@ import { useEffect, useState } from "react"
 import { RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { AdminBottomNav } from "../../components/admin-bottom-nav"
+import { AppButton } from "../../components/ui/app-button"
+import { AppCard } from "../../components/ui/app-card"
 import { AppTheme } from "../../constants/theme"
 import { SectionHeader } from "../../components/ui/section-header"
 import { supabase } from "../../lib/supabase"
@@ -122,8 +124,9 @@ export default function Admin() {
       >
         <View style={styles.header}>
           <View style={styles.headerCopy}>
+            <Text style={styles.eyebrow}>Admin control center</Text>
             <Text style={styles.brand}>QRensi</Text>
-            <Text style={styles.subtitle}>Admin control center</Text>
+            <Text style={styles.subtitle}>Kelola siswa, kehadiran, dan pengajuan dari satu pusat kontrol.</Text>
           </View>
 
           <View style={styles.headerActions}>
@@ -131,13 +134,10 @@ export default function Admin() {
               <Ionicons
                 name={refreshing ? "hourglass-outline" : "refresh-outline"}
                 size={18}
-                color="#22405f"
+                color={AppTheme.colors.primary}
               />
             </TouchableOpacity>
-            <TouchableOpacity onPress={logout} style={styles.logoutButton}>
-              <Ionicons name="log-out-outline" size={18} color="#FFFFFF" />
-              <Text style={styles.logoutText}>Keluar</Text>
-            </TouchableOpacity>
+            <AppButton label="Keluar" icon="log-out-outline" onPress={logout} style={styles.logoutButton} />
           </View>
         </View>
 
@@ -153,7 +153,11 @@ export default function Admin() {
           </Text>
         </View>
 
-        <TouchableOpacity style={styles.noticeCard} onPress={() => router.push("/pengajuan" as any)}>
+        <TouchableOpacity
+          style={styles.noticeCard}
+          onPress={() => router.push("/pengajuan" as any)}
+          activeOpacity={0.92}
+        >
           <View style={styles.noticeHeader}>
             <Text style={styles.noticeTitle}>Daftar Pengajuan</Text>
             <Text style={styles.noticeMeta}>{counts.pengajuan} pending</Text>
@@ -164,7 +168,7 @@ export default function Admin() {
             pendingSubmissions.map((item) => (
               <View key={item.id} style={styles.noticeItem}>
                 <View style={styles.noticeBadge}>
-                  <Ionicons name="document-text-outline" size={16} color="#16324f" />
+                  <Ionicons name="document-text-outline" size={16} color={AppTheme.colors.primary} />
                 </View>
                 <View style={styles.noticeCopy}>
                   <Text style={styles.noticeItemTitle}>{item.nama}</Text>
@@ -190,9 +194,9 @@ export default function Admin() {
 
         <View style={styles.menuGrid}>
           {adminActions.map((item) => (
-            <TouchableOpacity key={item.title} style={styles.menuItem} onPress={item.action}>
+            <TouchableOpacity key={item.title} style={styles.menuItem} onPress={item.action} activeOpacity={0.92}>
               <View style={styles.iconBox}>
-                <Ionicons name={item.icon} size={20} color="#22405f" />
+                <Ionicons name={item.icon} size={20} color={AppTheme.colors.primary} />
               </View>
               <Text style={styles.menuTitle}>{item.title}</Text>
               <Text style={styles.menuSubtitle}>{item.description}</Text>
@@ -200,14 +204,14 @@ export default function Admin() {
           ))}
         </View>
 
-        <TouchableOpacity style={styles.scanCard} onPress={() => router.push("/scanner" as any)}>
+        <TouchableOpacity style={styles.scanCard} onPress={() => router.push("/scanner" as any)} activeOpacity={0.94}>
           <View style={styles.scanCopy}>
             <Text style={styles.scanEyebrow}>Aksi cepat</Text>
             <Text style={styles.scanTitle}>Buka scanner QR</Text>
             <Text style={styles.scanText}>Lakukan check-in siswa langsung dari panel admin.</Text>
           </View>
           <View style={styles.scanIcon}>
-            <Ionicons name="scan-outline" size={28} color="#FFFFFF" />
+            <Ionicons name="scan-outline" size={28} color={AppTheme.colors.white} />
           </View>
         </TouchableOpacity>
       </ScrollView>
@@ -226,13 +230,13 @@ const StatCard = ({
   value: number
   icon: keyof typeof Ionicons.glyphMap
 }) => (
-  <View style={styles.statCard}>
+  <AppCard style={styles.statCard}>
     <View style={styles.statIcon}>
-      <Ionicons name={icon} size={18} color="#22405f" />
+      <Ionicons name={icon} size={18} color={AppTheme.colors.primary} />
     </View>
     <Text style={styles.statValue}>{value}</Text>
     <Text style={styles.statLabel}>{label}</Text>
-  </View>
+  </AppCard>
 )
 
 const styles = StyleSheet.create({
@@ -244,193 +248,180 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentContainer: {
-    paddingHorizontal: AppTheme.spacing.lg,
-    paddingTop: AppTheme.spacing.md,
-    paddingBottom: 28,
+    paddingHorizontal: AppTheme.spacing["2xl"],
+    paddingTop: AppTheme.spacing.lg,
+    paddingBottom: AppTheme.spacing["3xl"],
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
-    gap: 12,
-    marginBottom: 18,
+    alignItems: "flex-start",
+    gap: AppTheme.spacing.md,
+    marginBottom: AppTheme.spacing.xl,
+    flexWrap: "wrap",
   },
   headerCopy: {
     flex: 1,
+    minWidth: 180,
+  },
+  eyebrow: {
+    ...AppTheme.typography.eyebrow,
+    color: AppTheme.colors.primary,
+    marginBottom: AppTheme.spacing.xs,
   },
   brand: {
     ...AppTheme.typography.display,
   },
   subtitle: {
-    color: AppTheme.colors.textMuted,
-    fontSize: 13,
-    marginTop: 4,
+    ...AppTheme.typography.bodySm,
+    marginTop: AppTheme.spacing.xs,
   },
   headerActions: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
+    gap: AppTheme.spacing.sm,
   },
   iconButton: {
     width: 44,
     height: 44,
     borderRadius: AppTheme.radius.sm,
-    backgroundColor: AppTheme.colors.primarySoft,
+    backgroundColor: AppTheme.colors.backgroundMuted,
+    borderWidth: 1,
+    borderColor: AppTheme.colors.border,
     justifyContent: "center",
     alignItems: "center",
-    position: "relative",
   },
   logoutButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    backgroundColor: AppTheme.colors.primary,
-    borderRadius: AppTheme.radius.sm,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-  },
-  logoutText: {
-    color: AppTheme.colors.white,
-    fontWeight: "700",
+    minWidth: 120,
   },
   heroCard: {
     backgroundColor: AppTheme.colors.primary,
     borderRadius: AppTheme.radius.xl,
-    padding: 20,
-    marginBottom: 16,
+    padding: AppTheme.spacing.xl,
+    marginBottom: AppTheme.spacing.lg,
+    ...AppTheme.shadow.md,
   },
   heroBadge: {
     alignSelf: "flex-start",
     backgroundColor: AppTheme.colors.primaryMuted,
     borderRadius: AppTheme.radius.pill,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    paddingHorizontal: AppTheme.spacing.md,
+    paddingVertical: AppTheme.spacing.sm,
   },
   heroBadgeText: {
     color: AppTheme.colors.primarySoft,
+    fontFamily: AppTheme.fonts.semibold,
     fontSize: 12,
-    fontWeight: "700",
+    lineHeight: 18,
   },
   heroTitle: {
-    marginTop: 14,
+    marginTop: AppTheme.spacing.lg,
     color: AppTheme.colors.white,
-    fontSize: 24,
-    fontWeight: "800",
-    lineHeight: 31,
+    fontFamily: AppTheme.fonts.extrabold,
+    fontSize: 26,
+    lineHeight: 34,
   },
   heroCaption: {
-    marginTop: 10,
+    marginTop: AppTheme.spacing.sm,
     color: "#bfd1e4",
+    fontFamily: AppTheme.fonts.regular,
     fontSize: 13,
-    lineHeight: 18,
+    lineHeight: 20,
   },
   noticeCard: {
     backgroundColor: AppTheme.colors.surface,
     borderRadius: AppTheme.radius.lg,
-    padding: 16,
-    marginBottom: 16,
+    padding: AppTheme.spacing.xl,
+    marginBottom: AppTheme.spacing.lg,
     borderWidth: 1,
     borderColor: AppTheme.colors.border,
+    ...AppTheme.shadow.sm,
   },
   noticeHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 12,
+    marginBottom: AppTheme.spacing.md,
   },
   noticeMeta: {
     color: AppTheme.colors.primary,
+    fontFamily: AppTheme.fonts.semibold,
     fontSize: 12,
-    fontWeight: "800",
+    lineHeight: 18,
   },
   noticeItem: {
     flexDirection: "row",
     alignItems: "flex-start",
-    gap: 12,
-    paddingTop: 12,
-    paddingBottom: 2,
+    gap: AppTheme.spacing.md,
+    paddingTop: AppTheme.spacing.md,
+    paddingBottom: AppTheme.spacing.xs,
     borderTopWidth: 1,
     borderTopColor: AppTheme.colors.border,
   },
   noticeBadge: {
-    width: 38,
-    height: 38,
+    width: 40,
+    height: 40,
     borderRadius: AppTheme.radius.sm,
     backgroundColor: AppTheme.colors.primarySoft,
     justifyContent: "center",
     alignItems: "center",
   },
   noticeTitle: {
-    color: AppTheme.colors.text,
-    fontSize: 14,
-    fontWeight: "800",
+    ...AppTheme.typography.titleSm,
   },
   noticeCopy: {
     flex: 1,
   },
   noticeItemTitle: {
-    color: AppTheme.colors.text,
-    fontSize: 14,
-    fontWeight: "800",
-    marginBottom: 3,
+    ...AppTheme.typography.bodyStrong,
+    marginBottom: 2,
   },
   noticeText: {
-    color: AppTheme.colors.textMuted,
-    fontSize: 12,
-    lineHeight: 18,
+    ...AppTheme.typography.bodySm,
   },
   noticeEmpty: {
-    color: AppTheme.colors.textMuted,
-    fontSize: 12,
-    lineHeight: 18,
+    ...AppTheme.typography.bodySm,
   },
   statsRow: {
     flexDirection: "row",
-    gap: 10,
-    marginBottom: 18,
+    gap: AppTheme.spacing.md,
+    marginBottom: AppTheme.spacing.xl,
   },
   statCard: {
     flex: 1,
-    backgroundColor: AppTheme.colors.surface,
-    borderRadius: AppTheme.radius.lg,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: AppTheme.colors.border,
+    padding: AppTheme.spacing.lg,
   },
   statIcon: {
-    width: 34,
-    height: 34,
+    width: 40,
+    height: 40,
     borderRadius: AppTheme.radius.sm,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: AppTheme.colors.primarySoft,
   },
   statValue: {
-    color: AppTheme.colors.text,
-    fontSize: 24,
-    fontWeight: "800",
-    marginTop: 14,
+    ...AppTheme.typography.metric,
+    marginTop: AppTheme.spacing.lg,
   },
   statLabel: {
-    color: AppTheme.colors.textMuted,
-    fontSize: 12,
-    fontWeight: "600",
-    marginTop: 4,
+    ...AppTheme.typography.bodySm,
+    marginTop: AppTheme.spacing.xs,
   },
   menuGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
-    gap: 10,
+    gap: AppTheme.spacing.md,
   },
   menuItem: {
     width: "48.5%",
     borderRadius: AppTheme.radius.lg,
-    padding: 16,
+    padding: AppTheme.spacing.lg,
     backgroundColor: AppTheme.colors.surface,
     borderWidth: 1,
     borderColor: AppTheme.colors.border,
     minHeight: 140,
+    ...AppTheme.shadow.sm,
   },
   iconBox: {
     width: 40,
@@ -439,47 +430,41 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: AppTheme.colors.primarySoft,
-    marginBottom: 14,
+    marginBottom: AppTheme.spacing.lg,
   },
   menuTitle: {
-    fontSize: 16,
-    fontWeight: "800",
-    color: AppTheme.colors.text,
+    ...AppTheme.typography.titleSm,
   },
   menuSubtitle: {
-    color: AppTheme.colors.textMuted,
-    fontSize: 12,
-    lineHeight: 18,
-    marginTop: 8,
+    ...AppTheme.typography.bodySm,
+    marginTop: AppTheme.spacing.sm,
   },
   scanCard: {
-    marginTop: 16,
-    backgroundColor: AppTheme.colors.primarySoft,
+    marginTop: AppTheme.spacing.lg,
+    backgroundColor: AppTheme.colors.backgroundMuted,
     borderRadius: AppTheme.radius.xl,
-    padding: 18,
+    padding: AppTheme.spacing.xl,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    gap: 12,
+    gap: AppTheme.spacing.md,
+    borderWidth: 1,
+    borderColor: AppTheme.colors.border,
   },
   scanCopy: {
     flex: 1,
   },
   scanEyebrow: {
-    color: AppTheme.colors.textMuted,
-    fontSize: 12,
-    marginBottom: 6,
+    ...AppTheme.typography.eyebrow,
+    color: AppTheme.colors.primary,
+    marginBottom: AppTheme.spacing.xs,
   },
   scanTitle: {
-    color: AppTheme.colors.text,
-    fontSize: 21,
-    fontWeight: "800",
-    marginBottom: 4,
+    ...AppTheme.typography.title,
+    marginBottom: AppTheme.spacing.xs,
   },
   scanText: {
-    color: AppTheme.colors.textMuted,
-    fontSize: 12,
-    lineHeight: 18,
+    ...AppTheme.typography.bodySm,
   },
   scanIcon: {
     width: 56,

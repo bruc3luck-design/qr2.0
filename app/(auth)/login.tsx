@@ -1,24 +1,26 @@
 import React, { useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
+  Alert,
   Image,
   KeyboardAvoidingView,
+  Modal,
   Platform,
   ScrollView,
+  StyleSheet,
+  Text,
   TouchableOpacity,
-  Alert,
-  Modal,
+  View,
 } from "react-native";
 import { router } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+
+import { AppButton } from "../../components/ui/app-button";
+import { AppCard } from "../../components/ui/app-card";
+import { AppInput } from "../../components/ui/app-input";
+import { AppTheme } from "../../constants/theme";
+import { buildPasswordRequestNote } from "../../lib/pengajuan";
 import { supabase } from "../../lib/supabase";
 import { supabaseAdmin } from "../../lib/supabaseAdmin";
-import { AppTheme } from "../../constants/theme";
-import { AppButton } from "../../components/ui/app-button";
-import { AppInput } from "../../components/ui/app-input";
-import { AppCard } from "../../components/ui/app-card";
-import { buildPasswordRequestNote } from "../../lib/pengajuan";
 
 type AuthUserSummary = {
   id: string;
@@ -166,12 +168,17 @@ export default function Login() {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      style={styles.screen}
     >
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }} bounces={false}>
-        <View style={styles.headerContainer}>
-          <View style={styles.logoWrapper}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+        bounces={false}
+      >
+        <View style={styles.hero}>
+          <View style={styles.heroAccent} />
+          <View style={styles.brandChip}>
             <Image
               source={require("../../assets/images/react-logo.png")}
               style={styles.logo}
@@ -179,41 +186,46 @@ export default function Login() {
             />
             <Text style={styles.brandName}>QRensi</Text>
           </View>
-
-          <View style={styles.waveDecorator} />
+          <Text style={styles.heroEyebrow}>School attendance platform</Text>
+          <Text style={styles.heroTitle}>Masuk ke dashboard absensi yang lebih rapi dan fokus.</Text>
+          <Text style={styles.heroCaption}>
+            Gunakan akun admin atau siswa untuk memantau kehadiran, pengajuan, dan QR harian.
+          </Text>
         </View>
 
-        <AppCard style={styles.formContainer}>
-          <Text style={styles.welcomeEyebrow}>Secure school attendance</Text>
-          <Text style={styles.welcomeText}>Masuk ke panel QRensi</Text>
-          <Text style={styles.welcomeCaption}>
-            Gunakan akun yang sudah terdaftar untuk mengakses dashboard admin atau siswa.
-          </Text>
+        <AppCard style={styles.formCard}>
+          <View style={styles.formHeader}>
+            <Text style={styles.formEyebrow}>Akses akun</Text>
+            <Text style={styles.formTitle}>Masuk ke panel QRensi</Text>
+            <Text style={styles.formCaption}>
+              Semua tampilan dan data akan menyesuaikan peran akun setelah login berhasil.
+            </Text>
+          </View>
 
-          <AppInput
-            placeholder="Email"
-            value={email}
-            onChangeText={setEmail}
-            autoCapitalize="none"
-            keyboardType="email-address"
-          />
+          <View style={styles.formFields}>
+            <AppInput
+              placeholder="Email"
+              value={email}
+              onChangeText={setEmail}
+              autoCapitalize="none"
+              keyboardType="email-address"
+            />
 
-          <AppInput
-            placeholder="Password"
-            value={password}
-            secureTextEntry={!isPasswordVisible}
-            onChangeText={setPassword}
-            trailingIcon={isPasswordVisible ? "eye-outline" : "eye-off-outline"}
-            onTrailingPress={() => setIsPasswordVisible(!isPasswordVisible)}
-          />
+            <AppInput
+              placeholder="Password"
+              value={password}
+              secureTextEntry={!isPasswordVisible}
+              onChangeText={setPassword}
+              trailingIcon={isPasswordVisible ? "eye-outline" : "eye-off-outline"}
+              onTrailingPress={() => setIsPasswordVisible((value) => !value)}
+            />
+          </View>
 
           {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-          <TouchableOpacity
-            style={styles.forgotButton}
-            onPress={() => setShowForgotPassword(true)}
-          >
+          <TouchableOpacity style={styles.forgotButton} onPress={() => setShowForgotPassword(true)}>
             <Text style={styles.forgotButtonText}>Lupa password?</Text>
+            <Ionicons name="arrow-forward" size={16} color={AppTheme.colors.primary} />
           </TouchableOpacity>
 
           <AppButton label="Login" onPress={handleLogin} />
@@ -222,54 +234,67 @@ export default function Login() {
 
       <Modal transparent animationType="fade" visible={showForgotPassword} onRequestClose={() => setShowForgotPassword(false)}>
         <View style={styles.modalOverlay}>
-          <AppCard style={styles.requestCard}>
+          <AppCard style={styles.modalCard}>
             <View style={styles.modalHeader}>
-              <View style={styles.modalTitleWrap}>
-                <Text style={styles.requestTitle}>Permintaan Ganti Password</Text>
+              <View style={styles.modalHeaderCopy}>
+                <Text style={styles.modalEyebrow}>Bantuan akun</Text>
+                <Text style={styles.modalTitle}>Permintaan Ganti Password</Text>
                 <Text style={styles.requestCaption}>
-                  Isi data berikut. Permintaan akan masuk ke admin untuk disetujui dari daftar pengajuan.
+                  Isi detail berikut agar admin menerima permintaan penggantian password Anda.
                 </Text>
               </View>
-              <TouchableOpacity style={styles.modalClose} onPress={() => setShowForgotPassword(false)}>
-                <Text style={styles.modalCloseText}>Tutup</Text>
+              <TouchableOpacity
+                style={styles.modalClose}
+                onPress={() => setShowForgotPassword(false)}
+              >
+                <Ionicons name="close" size={18} color={AppTheme.colors.primary} />
               </TouchableOpacity>
             </View>
 
-            <AppInput
-              placeholder="Email akun"
-              value={forgotEmail}
-              onChangeText={setForgotEmail}
-              autoCapitalize="none"
-              keyboardType="email-address"
-            />
+            <View style={styles.modalFields}>
+              <AppInput
+                placeholder="Email akun"
+                value={forgotEmail}
+                onChangeText={setForgotEmail}
+                autoCapitalize="none"
+                keyboardType="email-address"
+              />
 
-            <AppInput
-              placeholder="Password baru"
-              value={forgotPassword}
-              onChangeText={setForgotPassword}
-              secureTextEntry
-            />
+              <AppInput
+                placeholder="Password baru"
+                value={forgotPassword}
+                onChangeText={setForgotPassword}
+                secureTextEntry
+              />
 
-            <AppInput
-              placeholder="Konfirmasi password baru"
-              value={forgotPasswordConfirm}
-              onChangeText={setForgotPasswordConfirm}
-              secureTextEntry
-            />
+              <AppInput
+                placeholder="Konfirmasi password baru"
+                value={forgotPasswordConfirm}
+                onChangeText={setForgotPasswordConfirm}
+                secureTextEntry
+              />
 
-            <AppInput
-              placeholder="Alasan ganti password"
-              value={forgotReason}
-              onChangeText={setForgotReason}
-              multiline
-              style={styles.reasonInput}
-            />
+              <AppInput
+                placeholder="Alasan ganti password"
+                value={forgotReason}
+                onChangeText={setForgotReason}
+                multiline
+                style={styles.reasonInput}
+              />
+            </View>
 
-            <AppButton
-              label={forgotSubmitting ? "Mengirim..." : "Kirim Permintaan"}
-              onPress={submitForgotPassword}
-              disabled={forgotSubmitting}
-            />
+            <View style={styles.modalActions}>
+              <AppButton
+                label="Tutup"
+                variant="ghost"
+                onPress={() => setShowForgotPassword(false)}
+              />
+              <AppButton
+                label={forgotSubmitting ? "Mengirim..." : "Kirim Permintaan"}
+                onPress={submitForgotPassword}
+                disabled={forgotSubmitting}
+              />
+            </View>
           </AppCard>
         </View>
       </Modal>
@@ -278,82 +303,116 @@ export default function Login() {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  screen: {
     flex: 1,
     backgroundColor: AppTheme.colors.background,
   },
-  headerContainer: {
-    height: 320,
-    backgroundColor: AppTheme.colors.accent,
-    justifyContent: "center",
-    alignItems: "center",
-    position: "relative",
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: AppTheme.spacing["3xl"],
   },
-  logoWrapper: {
+  hero: {
+    backgroundColor: AppTheme.colors.primary,
+    paddingHorizontal: AppTheme.spacing["2xl"],
+    paddingTop: AppTheme.spacing["5xl"],
+    paddingBottom: 110,
+    position: "relative",
+    overflow: "hidden",
+  },
+  heroAccent: {
+    position: "absolute",
+    right: -48,
+    top: -24,
+    width: 176,
+    height: 176,
+    borderRadius: 999,
+    backgroundColor: "rgba(255,255,255,0.07)",
+  },
+  brandChip: {
+    alignSelf: "flex-start",
+    flexDirection: "row",
     alignItems: "center",
-    zIndex: 2,
-    marginTop: -20,
+    gap: AppTheme.spacing.md,
+    paddingHorizontal: AppTheme.spacing.lg,
+    paddingVertical: AppTheme.spacing.md,
+    borderRadius: AppTheme.radius.pill,
+    backgroundColor: "rgba(255,255,255,0.08)",
+    marginBottom: AppTheme.spacing.xl,
   },
   logo: {
-    width: 90,
-    height: 90,
-    marginBottom: 5,
+    width: 32,
+    height: 32,
   },
   brandName: {
+    fontFamily: AppTheme.fonts.bold,
+    fontSize: 18,
+    lineHeight: 24,
     color: AppTheme.colors.white,
-    fontSize: 22,
-    fontWeight: "bold",
-    letterSpacing: 1.5,
   },
-  waveDecorator: {
-    position: "absolute",
-    bottom: -50,
-    left: 0,
-    right: 0,
-    height: 100,
-    backgroundColor: AppTheme.colors.background,
-    borderTopLeftRadius: 100,
-    transform: [{ scaleX: 1.5 }],
-  },
-  formContainer: {
-    marginHorizontal: 20,
-    marginTop: -28,
-    gap: AppTheme.spacing.md,
-  },
-  welcomeEyebrow: {
+  heroEyebrow: {
     ...AppTheme.typography.eyebrow,
-    textTransform: "uppercase",
-    letterSpacing: 0.8,
-  },
-  welcomeText: {
-    ...AppTheme.typography.title,
-  },
-  welcomeCaption: {
-    ...AppTheme.typography.body,
-    color: AppTheme.colors.textMuted,
+    color: "#CFE0F1",
     marginBottom: AppTheme.spacing.sm,
   },
+  heroTitle: {
+    fontFamily: AppTheme.fonts.extrabold,
+    fontSize: 30,
+    lineHeight: 40,
+    color: AppTheme.colors.white,
+    maxWidth: 320,
+  },
+  heroCaption: {
+    ...AppTheme.typography.body,
+    color: "#D7E6F5",
+    marginTop: AppTheme.spacing.md,
+    maxWidth: 320,
+  },
+  formCard: {
+    marginHorizontal: AppTheme.spacing["2xl"],
+    marginTop: -72,
+    gap: AppTheme.spacing.xl,
+  },
+  formHeader: {
+    gap: AppTheme.spacing.xs,
+  },
+  formEyebrow: {
+    ...AppTheme.typography.eyebrow,
+    color: AppTheme.colors.primary,
+  },
+  formTitle: {
+    ...AppTheme.typography.title,
+  },
+  formCaption: {
+    ...AppTheme.typography.body,
+    color: AppTheme.colors.textMuted,
+  },
+  formFields: {
+    gap: AppTheme.spacing.md,
+  },
   errorText: {
+    ...AppTheme.typography.bodySm,
     color: AppTheme.colors.danger,
-    textAlign: "left",
-    fontSize: 13,
   },
   forgotButton: {
     alignSelf: "flex-start",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: AppTheme.spacing.xs,
   },
   forgotButtonText: {
-    color: AppTheme.colors.primary,
-    fontWeight: "700",
+    fontFamily: AppTheme.fonts.semibold,
     fontSize: 13,
+    lineHeight: 20,
+    color: AppTheme.colors.primary,
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: AppTheme.colors.overlay,
     justifyContent: "center",
-    padding: 20,
+    padding: AppTheme.spacing.xl,
+    backgroundColor: AppTheme.colors.overlay,
   },
-  requestCard: {
-    gap: AppTheme.spacing.md,
+  modalCard: {
+    gap: AppTheme.spacing.xl,
   },
   modalHeader: {
     flexDirection: "row",
@@ -361,32 +420,39 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     gap: AppTheme.spacing.md,
   },
-  modalTitleWrap: {
+  modalHeaderCopy: {
     flex: 1,
+    gap: AppTheme.spacing.xs,
+  },
+  modalEyebrow: {
+    ...AppTheme.typography.eyebrow,
+    color: AppTheme.colors.primary,
+  },
+  modalTitle: {
+    ...AppTheme.typography.titleSm,
   },
   modalClose: {
-    backgroundColor: AppTheme.colors.primarySoft,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+    width: 40,
+    height: 40,
     borderRadius: AppTheme.radius.sm,
-  },
-  modalCloseText: {
-    color: AppTheme.colors.primary,
-    fontWeight: "700",
-    fontSize: 12,
-  },
-  requestTitle: {
-    color: AppTheme.colors.text,
-    fontSize: 17,
-    fontWeight: "800",
+    backgroundColor: AppTheme.colors.backgroundMuted,
+    borderWidth: 1,
+    borderColor: AppTheme.colors.border,
+    alignItems: "center",
+    justifyContent: "center",
   },
   requestCaption: {
-    color: AppTheme.colors.textMuted,
-    lineHeight: 20,
+    ...AppTheme.typography.bodySm,
+  },
+  modalFields: {
+    gap: AppTheme.spacing.md,
   },
   reasonInput: {
-    minHeight: 88,
+    minHeight: 104,
     textAlignVertical: "top",
-    paddingTop: 14,
+    paddingTop: AppTheme.spacing.lg,
+  },
+  modalActions: {
+    gap: AppTheme.spacing.md,
   },
 });

@@ -1,23 +1,25 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
   ActivityIndicator,
-  TouchableOpacity,
   Alert,
   Platform,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 
-import { supabase } from "../../lib/supabase";
 import QRCode from "react-native-qrcode-svg";
-import { UserBottomNav } from "../../components/user-bottom-nav";
-import { useFeatureBack } from "../../hooks/use-feature-back";
-import { saveImageToGallery, writeBase64ImageToCache } from "../../lib/device-files";
-import { AppTheme } from "../../constants/theme";
+
+import { AppButton } from "../../components/ui/app-button";
+import { AppCard } from "../../components/ui/app-card";
 import { InfoCard } from "../../components/ui/info-card";
 import { PageHeader } from "../../components/ui/page-header";
 import { ScreenShell } from "../../components/ui/screen-shell";
+import { UserBottomNav } from "../../components/user-bottom-nav";
+import { AppTheme } from "../../constants/theme";
+import { useFeatureBack } from "../../hooks/use-feature-back";
+import { saveImageToGallery, writeBase64ImageToCache } from "../../lib/device-files";
+import { supabase } from "../../lib/supabase";
 
 type Profile = {
   id: string;
@@ -26,7 +28,6 @@ type Profile = {
 };
 
 export default function GenerateQR() {
-
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState(false);
@@ -34,9 +35,6 @@ export default function GenerateQR() {
   const qrCodeRef = useRef<any>(null);
   const handleBack = useFeatureBack({ fallbackRoute: "/user" });
 
-  // ======================
-  // FETCH PROFILE
-  // ======================
   const fetchProfile = async () => {
     setLoading(true);
     try {
@@ -50,16 +48,12 @@ export default function GenerateQR() {
         if (error) throw error;
         setProfile(data);
       }
-    } catch (err: any) {
-      console.log(err.message || err);
+    } catch {
       setProfile(null);
     }
     setLoading(false);
   };
 
-  // ======================
-  // DOWNLOAD QR
-  // ======================
   const downloadQR = async () => {
     if (!qrCodeRef.current) {
       Alert.alert("QR belum siap");
@@ -109,18 +103,13 @@ export default function GenerateQR() {
       }
 
       Alert.alert("Berhasil", "QR berhasil disimpan ke galeri.");
-
-    } catch (err) {
-      console.log(err);
+    } catch {
       Alert.alert("Gagal menyimpan QR");
     } finally {
       setDownloading(false);
     }
   };
 
-  // ======================
-  // REALTIME UPDATE
-  // ======================
   useEffect(() => {
     fetchProfile();
 
@@ -152,100 +141,112 @@ export default function GenerateQR() {
     };
   }, []);
 
-  // ======================
-  // LOADING
-  // ======================
   if (loading)
-    return <ActivityIndicator size="large" style={{ flex: 1 }} />;
+    return <ActivityIndicator size="large" style={styles.centered} color={AppTheme.colors.primary} />;
 
   if (!profile)
     return (
-      <View style={styles.empty}>
-        <Text>Tidak ada data QR untuk akun ini.</Text>
+      <View style={styles.emptyState}>
+        <Text style={styles.emptyTitle}>Data QR belum tersedia</Text>
+        <Text style={styles.emptyCaption}>Akun ini belum memiliki profil siswa yang dapat dicetak.</Text>
       </View>
     );
 
-  // ======================
-  // UI
-  // ======================
   return (
     <ScreenShell scroll footer={<UserBottomNav activeKey="generate_qr" />}>
-        <View style={styles.shell}>
+      <View style={styles.shell}>
         <PageHeader eyebrow="Kartu QR siswa" title="Kode QR" onBackPress={handleBack} />
 
         <InfoCard
-          title="Kartu digital siswa"
-          description="QR ini dapat disimpan ke galeri lalu dicetak untuk proses pemindaian harian."
+          title="Kartu QR digital"
+          description="Simpan QR ini ke galeri untuk dicetak atau ditunjukkan saat pemindaian absensi harian."
         />
 
-        <View style={styles.card}>
-          <Text style={styles.title}>KARTU QR SISWA</Text>
-          <Text style={styles.name}>{profile.nama}</Text>
-          <Text style={styles.kelas}>{profile.kelas}</Text>
-          <View style={styles.qrBox}>
+        <AppCard style={styles.card}>
+          <View style={styles.cardHeader}>
+            <Text style={styles.cardEyebrow}>QRensi card</Text>
+            <Text style={styles.name}>{profile.nama}</Text>
+            <Text style={styles.className}>Kelas {profile.kelas}</Text>
+          </View>
+
+          <View style={styles.qrFrame}>
             <QRCode
               value={profile.id}
-              size={200}
+              size={208}
               getRef={(ref) => {
                 qrCodeRef.current = ref;
               }}
             />
           </View>
-          <Text style={styles.caption}>Cetak QR ini dan simpan di holder kartu siswa untuk pemindaian harian.</Text>
-        </View>
+          <Text style={styles.caption}>
+            Cetak kartu ini dan simpan di holder siswa agar proses scan setiap hari lebih cepat dan konsisten.
+          </Text>
+        </AppCard>
 
-        <View style={styles.buttonRow}>
-          <TouchableOpacity
-            style={[styles.button, downloading && { opacity: 0.5 }]}
-            onPress={downloadQR}
-            disabled={downloading}
-          >
-            <Text style={styles.buttonText}>{downloading ? "Mengunduh..." : "Unduh QR"}</Text>
-          </TouchableOpacity>
-        </View>
-        </View>
+        <AppButton
+          label={downloading ? "Mengunduh..." : "Unduh QR"}
+          onPress={downloadQR}
+          disabled={downloading}
+          icon="download-outline"
+        />
+      </View>
     </ScreenShell>
   );
 }
 
-// ======================
-// STYLE
-// ======================
 const styles = StyleSheet.create({
+  centered: {
+    flex: 1,
+  },
+  emptyState: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    gap: AppTheme.spacing.sm,
+    paddingHorizontal: AppTheme.spacing["3xl"],
+    backgroundColor: AppTheme.colors.background,
+  },
+  emptyTitle: {
+    ...AppTheme.typography.titleSm,
+    textAlign: "center",
+  },
+  emptyCaption: {
+    ...AppTheme.typography.body,
+    textAlign: "center",
+    color: AppTheme.colors.textMuted,
+  },
   shell: {
-    paddingBottom: 8,
+    gap: AppTheme.spacing.lg,
   },
   card: {
-    backgroundColor: AppTheme.colors.surface,
-    borderRadius: AppTheme.radius.xl,
-    padding: 25,
     alignItems: "center",
-    width: "100%",
+    gap: AppTheme.spacing.xl,
+  },
+  cardHeader: {
+    alignItems: "center",
+    gap: AppTheme.spacing.xs,
+  },
+  cardEyebrow: {
+    ...AppTheme.typography.eyebrow,
+    color: AppTheme.colors.primary,
+  },
+  name: {
+    ...AppTheme.typography.title,
+    textAlign: "center",
+  },
+  className: {
+    ...AppTheme.typography.body,
+    color: AppTheme.colors.textMuted,
+  },
+  qrFrame: {
+    padding: AppTheme.spacing.lg,
+    backgroundColor: AppTheme.colors.surface,
+    borderRadius: AppTheme.radius.lg,
     borderWidth: 1,
     borderColor: AppTheme.colors.border,
   },
-  title: { fontSize: 16, fontWeight: "bold", marginBottom: 10, color: AppTheme.colors.text },
-  name: { fontSize: 20, fontWeight: "bold", color: AppTheme.colors.text },
-  kelas: { fontSize: 14, color: AppTheme.colors.textMuted, marginBottom: 15 },
-  qrBox: { padding: 14, backgroundColor: AppTheme.colors.surface, borderRadius: AppTheme.radius.md },
   caption: {
-    marginTop: 14,
+    ...AppTheme.typography.bodySm,
     textAlign: "center",
-    color: AppTheme.colors.textMuted,
-    lineHeight: 18,
-    fontSize: 12,
   },
-  buttonRow: {
-    marginTop: 18,
-    flexDirection: "row",
-    justifyContent: "center",
-  },
-  button: {
-    backgroundColor: AppTheme.colors.primary,
-    paddingVertical: 12,
-    paddingHorizontal: 30,
-    borderRadius: AppTheme.radius.md
-  },
-  buttonText: { color: AppTheme.colors.white, fontWeight: "bold", fontSize: 15 },
-  empty: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: AppTheme.colors.background }
 });

@@ -1,41 +1,37 @@
-import {
-  View,
-  Alert,
-  StyleSheet,
-  RefreshControl,
-} from "react-native"
-import { useState, useCallback } from "react"
-import { supabaseAdmin } from "../../lib/supabaseAdmin"
-import { router } from "expo-router"
-import { Picker } from "@react-native-picker/picker"
-import { AdminBottomNav } from "../../components/admin-bottom-nav"
-import { AppTheme } from "../../constants/theme"
-import { AppButton } from "../../components/ui/app-button"
-import { AppCard } from "../../components/ui/app-card"
-import { AppInput } from "../../components/ui/app-input"
-import { InfoCard } from "../../components/ui/info-card"
-import { PageHeader } from "../../components/ui/page-header"
-import { ScreenShell } from "../../components/ui/screen-shell"
+import { router } from "expo-router";
+import { useCallback, useState } from "react";
+import { Alert, RefreshControl, StyleSheet, Text, View } from "react-native";
+import { Picker } from "@react-native-picker/picker";
+
+import { AdminBottomNav } from "../../components/admin-bottom-nav";
+import { AppButton } from "../../components/ui/app-button";
+import { AppCard } from "../../components/ui/app-card";
+import { AppInput } from "../../components/ui/app-input";
+import { InfoCard } from "../../components/ui/info-card";
+import { PageHeader } from "../../components/ui/page-header";
+import { ScreenShell } from "../../components/ui/screen-shell";
+import { AppTheme } from "../../constants/theme";
 import {
   isStudentNameVerySimilar,
   normalizeStudentName,
-} from "../../lib/student"
+} from "../../lib/student";
+import { supabaseAdmin } from "../../lib/supabaseAdmin";
 
 export default function TambahUser() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [nama, setNama] = useState("")
-  const [kelas, setKelas] = useState("7 Banin")
-  const [loading, setLoading] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
-  const [refreshing, setRefreshing] = useState(false)
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [nama, setNama] = useState("");
+  const [kelas, setKelas] = useState("7 Banin");
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const handleNamaChange = (text: string) => setNama(normalizeStudentName(text))
+  const handleNamaChange = (text: string) => setNama(normalizeStudentName(text));
 
   const isValidEmail = (value: string) => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     return regex.test(value)
-  }
+  };
 
   const createUser = async () => {
     if (!email || !password || !nama || !kelas) {
@@ -160,12 +156,12 @@ export default function TambahUser() {
         },
       ]
     )
-  }
+  };
 
   const onRefresh = useCallback(async () => {
-    setRefreshing(true)
-    setTimeout(() => setRefreshing(false), 1000)
-  }, [])
+    setRefreshing(true);
+    setTimeout(() => setRefreshing(false), 1000);
+  }, []);
 
   return (
     <ScreenShell
@@ -175,7 +171,7 @@ export default function TambahUser() {
         refreshControl: <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />,
       }}
     >
-        <View style={styles.shell}>
+      <View style={styles.shell}>
         <PageHeader
           eyebrow="Akun baru"
           title="Tambah User"
@@ -188,6 +184,13 @@ export default function TambahUser() {
         />
 
         <AppCard style={styles.formCard}>
+          <View style={styles.cardHeader}>
+            <Text style={styles.cardTitle}>Informasi Akun</Text>
+            <Text style={styles.cardCaption}>
+              Gunakan format nama yang rapi dan pastikan kelas sesuai sebelum menyimpan.
+            </Text>
+          </View>
+
           <AppInput
             placeholder="Nama Lengkap"
             value={nama}
@@ -228,15 +231,24 @@ export default function TambahUser() {
         </AppCard>
       </View>
     </ScreenShell>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   shell: {
-    paddingBottom: 8,
+    gap: AppTheme.spacing.lg,
   },
   formCard: {
     gap: AppTheme.spacing.md,
+  },
+  cardHeader: {
+    gap: AppTheme.spacing.xs,
+  },
+  cardTitle: {
+    ...AppTheme.typography.titleSm,
+  },
+  cardCaption: {
+    ...AppTheme.typography.bodySm,
   },
   pickerBox: {
     backgroundColor: AppTheme.colors.surface,
@@ -245,4 +257,4 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: AppTheme.colors.border,
   },
-})
+});

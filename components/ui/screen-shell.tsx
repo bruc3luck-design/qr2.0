@@ -54,8 +54,8 @@ const styles = StyleSheet.create({
     backgroundColor: AppTheme.colors.background,
   },
   content: {
-    paddingHorizontal: AppTheme.spacing.lg,
-    paddingTop: AppTheme.spacing.md,
-    paddingBottom: AppTheme.spacing.xl,
+    paddingHorizontal: AppTheme.spacing["2xl"],
+    paddingTop: AppTheme.spacing.lg,
+    paddingBottom: AppTheme.spacing["3xl"],
   },
 });

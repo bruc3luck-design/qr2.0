@@ -503,7 +503,7 @@ export default function DaftarAkun() {
         />
 
         {loading ? (
-          <ActivityIndicator size="large" color="#6D3BFF" />
+          <ActivityIndicator size="large" color={AppTheme.colors.primary} />
         ) : (
           <ScrollView
             showsVerticalScrollIndicator={false}
@@ -519,7 +519,11 @@ export default function DaftarAkun() {
                     style={[styles.card, active && styles.cardActive]}
                     onPress={() => setSelectedClass(kelas)}
                   >
-                    <Ionicons name="school" size={26} color={active ? "#6D3BFF" : "#3A86FF"} />
+                    <Ionicons
+                      name="school"
+                      size={26}
+                      color={active ? AppTheme.colors.primary : AppTheme.colors.primaryMuted}
+                    />
                     <Text style={styles.kelasText}>{kelas}</Text>
                     <Text style={styles.jumlah}>{jumlah} siswa</Text>
                   </TouchableOpacity>
@@ -572,7 +576,7 @@ export default function DaftarAkun() {
                   siswa.map((user) => (
                     <View key={user.id} style={styles.userItem}>
                       <View style={styles.userInfo}>
-                        <Ionicons name="person-circle" size={24} color="#6D3BFF" />
+                          <Ionicons name="person-circle" size={24} color={AppTheme.colors.primary} />
                         <View style={styles.userTextWrap}>
                           <Text style={styles.nama}>{user.nama}</Text>
                           <Text style={styles.kelasBadge}>{user.kelas}</Text>
@@ -719,10 +723,10 @@ export default function DaftarAkun() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, paddingBottom: 16 },
+  container: { flex: 1, paddingBottom: AppTheme.spacing.lg },
   addHeaderButton: {
-    width: 42,
-    height: 42,
+    width: 44,
+    height: 44,
     borderRadius: AppTheme.radius.md,
     alignItems: "center",
     justifyContent: "center",
@@ -737,56 +741,59 @@ const styles = StyleSheet.create({
   card: {
     width: "48%",
     backgroundColor: AppTheme.colors.surface,
-    padding: 18,
+    padding: AppTheme.spacing.xl,
     borderRadius: AppTheme.radius.lg,
     alignItems: "center",
-    marginBottom: 15,
+    marginBottom: AppTheme.spacing.lg,
     borderWidth: 1,
     borderColor: AppTheme.colors.border,
+    ...AppTheme.shadow.sm,
   },
   cardActive: { backgroundColor: AppTheme.colors.primarySoft, borderWidth: 1, borderColor: AppTheme.colors.primary },
-  kelasText: { fontSize: 15, fontWeight: "bold", marginTop: 8, color: AppTheme.colors.text },
-  jumlah: { fontSize: 12, color: AppTheme.colors.textMuted, marginTop: 3 },
+  kelasText: { ...AppTheme.typography.titleSm, marginTop: AppTheme.spacing.sm, color: AppTheme.colors.text },
+  jumlah: { ...AppTheme.typography.bodySm, marginTop: AppTheme.spacing.xs },
   listContainer: {
-    marginTop: 20,
+    marginTop: AppTheme.spacing.xl,
     backgroundColor: AppTheme.colors.surface,
-    padding: 16,
+    padding: AppTheme.spacing.xl,
     borderRadius: AppTheme.radius.lg,
     borderWidth: 1,
     borderColor: AppTheme.colors.border,
-    marginBottom: 12,
+    marginBottom: AppTheme.spacing.md,
+    ...AppTheme.shadow.sm,
   },
   searchBox: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: AppTheme.spacing.sm,
     backgroundColor: AppTheme.colors.surfaceMuted,
     borderWidth: 1,
     borderColor: AppTheme.colors.border,
     borderRadius: AppTheme.radius.md,
-    paddingHorizontal: 14,
+    paddingHorizontal: AppTheme.spacing.lg,
     paddingVertical: 4,
-    marginBottom: 8,
+    marginBottom: AppTheme.spacing.sm,
   },
   searchInput: {
     flex: 1,
     minHeight: 42,
     color: AppTheme.colors.text,
+    fontFamily: AppTheme.fonts.medium,
     fontSize: 14,
-    fontWeight: "600",
+    lineHeight: 20,
   },
   resetButton: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
+    gap: AppTheme.spacing.xs,
     backgroundColor: AppTheme.colors.danger,
     borderRadius: AppTheme.radius.sm,
     paddingHorizontal: 12,
     paddingVertical: 10,
   },
-  resetButtonText: { color: AppTheme.colors.white, fontWeight: "700", fontSize: 12 },
+  resetButtonText: { ...AppTheme.typography.bodyStrong, color: AppTheme.colors.white },
   userItem: {
-    paddingVertical: 12,
+    paddingVertical: AppTheme.spacing.md,
     borderTopWidth: 1,
     borderTopColor: AppTheme.colors.border,
   },
@@ -795,50 +802,50 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
-  userTextWrap: { marginLeft: 10, flex: 1 },
-  nama: { fontSize: 15, color: AppTheme.colors.text, fontWeight: "700" },
-  kelasBadge: { color: AppTheme.colors.textMuted, marginTop: 4, fontSize: 12 },
+  userTextWrap: { marginLeft: AppTheme.spacing.sm, flex: 1 },
+  nama: { ...AppTheme.typography.bodyStrong, color: AppTheme.colors.text },
+  kelasBadge: { ...AppTheme.typography.bodySm, marginTop: AppTheme.spacing.xs },
   actionRow: {
     flexDirection: "row",
     justifyContent: "flex-end",
-    marginTop: 10,
-    gap: 10,
+    marginTop: AppTheme.spacing.sm,
+    gap: AppTheme.spacing.sm,
   },
   editButton: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
+    gap: AppTheme.spacing.xs,
     backgroundColor: AppTheme.colors.primarySoft,
     paddingHorizontal: 12,
     paddingVertical: 10,
     borderRadius: AppTheme.radius.sm,
   },
-  editButtonText: { color: AppTheme.colors.primary, fontWeight: "700" },
+  editButtonText: { ...AppTheme.typography.bodyStrong, color: AppTheme.colors.primary },
   deleteButton: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
+    gap: AppTheme.spacing.xs,
     backgroundColor: AppTheme.colors.danger,
     paddingHorizontal: 12,
     paddingVertical: 10,
     borderRadius: AppTheme.radius.sm,
   },
-  deleteButtonText: { color: AppTheme.colors.white, fontWeight: "700" },
-  kosong: { color: AppTheme.colors.textMuted, fontStyle: "italic" },
+  deleteButtonText: { ...AppTheme.typography.bodyStrong, color: AppTheme.colors.white },
+  kosong: { ...AppTheme.typography.bodySm, fontStyle: "italic" },
   modalOverlay: {
     flex: 1,
     backgroundColor: AppTheme.colors.overlay,
     justifyContent: "center",
-    padding: 20,
+    padding: AppTheme.spacing.xl,
   },
   modalHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: AppTheme.spacing.lg,
   },
-  modalEyebrow: { color: AppTheme.colors.textMuted, fontSize: 12, marginBottom: 4 },
-  modalTitle: { color: AppTheme.colors.text, fontSize: 20, fontWeight: "800" },
+  modalEyebrow: { ...AppTheme.typography.label, marginBottom: AppTheme.spacing.xs },
+  modalTitle: { ...AppTheme.typography.title },
   modalClose: {
     width: 36,
     height: 36,
@@ -849,11 +856,12 @@ const styles = StyleSheet.create({
   },
   input: {
     backgroundColor: AppTheme.colors.surface,
-    padding: 15,
+    padding: AppTheme.spacing.lg,
     borderRadius: AppTheme.radius.md,
-    marginBottom: 15,
-    fontWeight: "600",
+    marginBottom: AppTheme.spacing.lg,
+    fontFamily: AppTheme.fonts.medium,
     fontSize: 16,
+    lineHeight: 22,
     color: AppTheme.colors.text,
     borderWidth: 1,
     borderColor: AppTheme.colors.border,
@@ -861,7 +869,7 @@ const styles = StyleSheet.create({
   pickerBox: {
     backgroundColor: AppTheme.colors.surface,
     borderRadius: AppTheme.radius.md,
-    marginBottom: 18,
+    marginBottom: AppTheme.spacing.xl,
     borderWidth: 1,
     borderColor: AppTheme.colors.border,
     overflow: "hidden",
@@ -869,9 +877,9 @@ const styles = StyleSheet.create({
   saveButton: {
     backgroundColor: AppTheme.colors.primary,
     borderRadius: AppTheme.radius.md,
-    paddingVertical: 14,
+    paddingVertical: AppTheme.spacing.lg,
     alignItems: "center",
   },
-  saveButtonText: { color: AppTheme.colors.white, fontWeight: "800", fontSize: 15 },
+  saveButtonText: { ...AppTheme.typography.button },
   disabledButton: { opacity: 0.7 },
 })

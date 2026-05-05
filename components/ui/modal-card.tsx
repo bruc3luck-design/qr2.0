@@ -10,8 +10,9 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: AppTheme.colors.surface,
     borderRadius: AppTheme.radius.xl,
-    padding: AppTheme.spacing.lg,
+    padding: AppTheme.spacing.xl,
     borderWidth: 1,
     borderColor: AppTheme.colors.border,
+    ...AppTheme.shadow.md,
   },
 });

@@ -1,40 +1,42 @@
-import { View, Text, StyleSheet, ActivityIndicator, RefreshControl } from "react-native"
-import { useEffect, useState } from "react"
-import { supabase } from "../../lib/supabase"
-import { supabaseAdmin } from "../../lib/supabaseAdmin"
-import { Ionicons } from "@expo/vector-icons"
-import { UserBottomNav } from "../../components/user-bottom-nav"
-import { useFeatureBack } from "../../hooks/use-feature-back"
-import { getLocalDateValue } from "../../lib/date"
-import { getDefaultAttendanceStatus } from "../../lib/pengajuan"
-import { AppTheme } from "../../constants/theme"
-import { InfoCard } from "../../components/ui/info-card"
-import { ModalCard } from "../../components/ui/modal-card"
-import { PageHeader } from "../../components/ui/page-header"
-import { ScreenShell } from "../../components/ui/screen-shell"
+import { useEffect, useState } from "react";
+import { ActivityIndicator, RefreshControl, StyleSheet, Text, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+
+import { AppCard } from "../../components/ui/app-card";
+import { InfoCard } from "../../components/ui/info-card";
+import { PageHeader } from "../../components/ui/page-header";
+import { ScreenShell } from "../../components/ui/screen-shell";
+import { UserBottomNav } from "../../components/user-bottom-nav";
+import { AppTheme } from "../../constants/theme";
+import { useFeatureBack } from "../../hooks/use-feature-back";
+import { getLocalDateValue } from "../../lib/date";
+import { getDefaultAttendanceStatus } from "../../lib/pengajuan";
+import { supabase } from "../../lib/supabase";
+import { supabaseAdmin } from "../../lib/supabaseAdmin";
 
 export default function StatusKehadiran() {
-  const [status, setStatus] = useState("")
-  const [loading, setLoading] = useState(true)
-  const [refreshing, setRefreshing] = useState(false)
-  const handleBack = useFeatureBack({ fallbackRoute: "/user" })
+  const [status, setStatus] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const handleBack = useFeatureBack({ fallbackRoute: "/user" });
 
   const refreshFallbackStatus = () => {
-    setStatus((prev) => (prev === "Belum Absen" || prev === "Tidak Hadir" ? getDefaultAttendanceStatus() : prev))
-  }
+    setStatus((prev) =>
+      prev === "Belum Absen" || prev === "Tidak Hadir" ? getDefaultAttendanceStatus() : prev
+    );
+  };
 
   useEffect(() => {
-    getStatus()
+    getStatus();
 
-    // Setup realtime subscription
-    let subscription: any = null
+    let subscription: any = null;
 
     const setupRealtime = async () => {
-      const { data: userData } = await supabase.auth.getUser()
-      const userId = userData?.user?.id
-      if (!userId) return
+      const { data: userData } = await supabase.auth.getUser();
+      const userId = userData?.user?.id;
+      if (!userId) return;
 
-      const today = getLocalDateValue()
+      const today = getLocalDateValue();
 
       subscription = supabase
         .channel(`public:absensi:${userId}`)
@@ -49,34 +51,34 @@ export default function StatusKehadiran() {
           (payload) => {
             const nextRow = payload.new as { status?: string; tanggal?: string } | undefined
             if (nextRow?.tanggal === today) {
-              setStatus(nextRow.status || getDefaultAttendanceStatus())
+              setStatus(nextRow.status || getDefaultAttendanceStatus());
             }
           }
         )
-        .subscribe()
-    }
+        .subscribe();
+    };
 
-    setupRealtime()
-    const cutoffWatcher = setInterval(refreshFallbackStatus, 30000)
+    setupRealtime();
+    const cutoffWatcher = setInterval(refreshFallbackStatus, 30000);
 
     return () => {
-      clearInterval(cutoffWatcher)
-      if (subscription) supabase.removeChannel(subscription)
-    }
-  }, [])
+      clearInterval(cutoffWatcher);
+      if (subscription) supabase.removeChannel(subscription);
+    };
+  }, []);
 
   const getStatus = async () => {
-    const { data: userData } = await supabase.auth.getUser()
-    const userId = userData?.user?.id
+    const { data: userData } = await supabase.auth.getUser();
+    const userId = userData?.user?.id;
 
     if (!userId) {
-      setStatus("User tidak ditemukan")
-      setLoading(false)
-      setRefreshing(false)
-      return
+      setStatus("User tidak ditemukan");
+      setLoading(false);
+      setRefreshing(false);
+      return;
     }
 
-    const today = getLocalDateValue()
+    const today = getLocalDateValue();
 
     const { data, error } = await supabaseAdmin
       .from("absensi")
@@ -85,30 +87,46 @@ export default function StatusKehadiran() {
       .eq("tanggal", today)
       .maybeSingle()
 
-    if (error || !data) {
-      setStatus(getDefaultAttendanceStatus())
-    } else {
-      setStatus(data.status || getDefaultAttendanceStatus())
-    }
+    setStatus(error || !data ? getDefaultAttendanceStatus() : data.status || getDefaultAttendanceStatus());
 
-    setLoading(false)
-    setRefreshing(false)
-  }
+    setLoading(false);
+    setRefreshing(false);
+  };
 
   const onRefresh = () => {
-    setRefreshing(true)
-    getStatus()
-  }
+    setRefreshing(true);
+    getStatus();
+  };
 
-  const normalizedStatus = status.toLowerCase()
+  const normalizedStatus = status.toLowerCase();
   const statusTheme =
     normalizedStatus === "hadir"
-      ? { bg: "#DFF6EF", text: "#17906A", note: "Kehadiranmu sudah tercatat hari ini." }
+      ? {
+          background: AppTheme.colors.successSoft,
+          foreground: AppTheme.colors.success,
+          icon: "checkmark-circle-outline" as const,
+          note: "Kehadiranmu sudah tercatat hari ini.",
+        }
       : normalizedStatus === "izin" || normalizedStatus === "sakit"
-        ? { bg: "#FFF0D9", text: "#C67A12", note: "Status ketidakhadiran sudah diperbarui." }
+        ? {
+            background: AppTheme.colors.warningSoft,
+            foreground: AppTheme.colors.warning,
+            icon: "document-text-outline" as const,
+            note: "Status ketidakhadiran sudah diperbarui.",
+          }
         : normalizedStatus === "tidak hadir"
-          ? { bg: AppTheme.colors.dangerSoft, text: AppTheme.colors.danger, note: "Batas absensi sudah lewat dan belum ada kehadiran atau izin yang disetujui." }
-          : { bg: AppTheme.colors.primarySoft, text: AppTheme.colors.primary, note: "Silakan lakukan scan QR untuk mencatat kehadiran." }
+          ? {
+              background: AppTheme.colors.dangerSoft,
+              foreground: AppTheme.colors.danger,
+              icon: "alert-circle-outline" as const,
+              note: "Batas absensi sudah lewat dan belum ada kehadiran atau izin yang disetujui.",
+            }
+          : {
+              background: AppTheme.colors.primarySoft,
+              foreground: AppTheme.colors.primary,
+              icon: "qr-code-outline" as const,
+              note: "Silakan lakukan scan QR untuk mencatat kehadiran.",
+            };
 
   return (
     <ScreenShell
@@ -118,26 +136,15 @@ export default function StatusKehadiran() {
         refreshControl: <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />,
       }}
     >
-        <View style={styles.shell}>
-        <PageHeader
-          eyebrow="Kehadiran Hari Ini"
-          title="Status Kehadiran"
-          onBackPress={handleBack}
-          rightSlot={
-            <View style={styles.dotMenu}>
-            <Ionicons name="ellipse" size={6} color="#BBA9F5" />
-            <Ionicons name="ellipse" size={6} color="#BBA9F5" />
-            <Ionicons name="ellipse" size={6} color="#BBA9F5" />
-            </View>
-          }
-        />
+      <View style={styles.shell}>
+        <PageHeader eyebrow="Presensi hari ini" title="Status Kehadiran" onBackPress={handleBack} />
 
         <InfoCard
-          title="Status presensi harian"
-          description="Halaman ini menampilkan hasil kehadiran terbaru yang tersimpan untuk hari ini."
+          title="Ringkasan status harian"
+          description="Halaman ini menampilkan hasil presensi terbaru yang tersimpan untuk hari ini secara realtime."
         />
 
-        <ModalCard style={styles.card}>
+        <AppCard style={styles.card}>
           <Text style={styles.dateLabel}>
             {new Date().toLocaleDateString("id-ID", {
               weekday: "long",
@@ -148,11 +155,14 @@ export default function StatusKehadiran() {
           </Text>
 
           {loading ? (
-            <ActivityIndicator size="large" color="#6D3BFF" style={{ marginVertical: 24 }} />
+            <ActivityIndicator size="large" color={AppTheme.colors.primary} style={styles.loader} />
           ) : (
             <>
-              <View style={[styles.statusPill, { backgroundColor: statusTheme.bg }]}>
-                <Text style={[styles.status, { color: statusTheme.text }]}>{status}</Text>
+              <View style={[styles.statusBlock, { backgroundColor: statusTheme.background }]}>
+                <View style={[styles.statusIcon, { backgroundColor: `${statusTheme.foreground}18` }]}>
+                  <Ionicons name={statusTheme.icon} size={22} color={statusTheme.foreground} />
+                </View>
+                <Text style={[styles.statusText, { color: statusTheme.foreground }]}>{status}</Text>
               </View>
               <Text style={styles.note}>{statusTheme.note}</Text>
             </>
@@ -163,10 +173,10 @@ export default function StatusKehadiran() {
             <Row label="Metode" value="Scan QR" />
             <Row label="Sinkronisasi" value="Realtime" />
           </View>
-        </ModalCard>
-        </View>
+        </AppCard>
+      </View>
     </ScreenShell>
-  )
+  );
 }
 
 const Row = ({ label, value }: { label: string; value: string }) => (
@@ -174,59 +184,66 @@ const Row = ({ label, value }: { label: string; value: string }) => (
     <Text style={styles.rowLabel}>{label}</Text>
     <Text style={styles.rowValue}>{value}</Text>
   </View>
-)
+);
 
 const styles = StyleSheet.create({
   shell: {
-    paddingBottom: 8,
-  },
-  dotMenu: {
-    flexDirection: "row",
-    gap: 4,
+    gap: AppTheme.spacing.lg,
   },
   card: {
-    padding: 22,
+    gap: AppTheme.spacing.xl,
   },
   dateLabel: {
+    ...AppTheme.typography.bodySm,
     textAlign: "center",
-    color: AppTheme.colors.textMuted,
-    marginBottom: 14,
   },
-  statusPill: {
-    alignSelf: "center",
-    paddingHorizontal: 18,
-    paddingVertical: 10,
-    borderRadius: 999,
+  loader: {
+    marginVertical: AppTheme.spacing.lg,
   },
-  status: {
-    fontSize: 22,
-    fontWeight: "800",
+  statusBlock: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: AppTheme.spacing["2xl"],
+    borderRadius: AppTheme.radius.xl,
+    gap: AppTheme.spacing.md,
+  },
+  statusIcon: {
+    width: 52,
+    height: 52,
+    borderRadius: AppTheme.radius.md,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  statusText: {
+    fontFamily: AppTheme.fonts.extrabold,
+    fontSize: 24,
+    lineHeight: 32,
     textTransform: "capitalize",
+    textAlign: "center",
   },
   note: {
-    marginTop: 14,
+    ...AppTheme.typography.body,
     textAlign: "center",
     color: AppTheme.colors.textMuted,
-    lineHeight: 20,
   },
   detailCard: {
-    marginTop: 22,
-    backgroundColor: AppTheme.colors.surfaceMuted,
-    borderRadius: AppTheme.radius.md,
-    padding: 16,
+    backgroundColor: AppTheme.colors.backgroundMuted,
+    borderRadius: AppTheme.radius.lg,
+    padding: AppTheme.spacing.lg,
+    borderWidth: 1,
+    borderColor: AppTheme.colors.border,
   },
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingVertical: 8,
+    paddingVertical: AppTheme.spacing.sm,
     borderBottomWidth: 1,
     borderBottomColor: AppTheme.colors.border,
   },
   rowLabel: {
-    color: AppTheme.colors.textMuted,
+    ...AppTheme.typography.bodySm,
   },
   rowValue: {
-    color: AppTheme.colors.text,
-    fontWeight: "700",
+    ...AppTheme.typography.bodyStrong,
   },
-})
+});

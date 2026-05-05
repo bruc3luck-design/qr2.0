@@ -1,29 +1,29 @@
 import { Platform, StyleSheet, type TextStyle, type ViewStyle } from "react-native";
 
 export const AppPalette = {
-  primary: "#16324F",
-  primarySoft: "#DBE7F4",
-  primaryMuted: "#284B70",
-  accent: "#3A86FF",
-  accentSoft: "#EAF2FB",
-  background: "#F4F7FB",
+  primary: "#102A43",
+  primarySoft: "#E8EFF7",
+  primaryMuted: "#36597C",
+  primaryStrong: "#0A1C2E",
+  background: "#FFFFFF",
+  backgroundMuted: "#F5F8FC",
   surface: "#FFFFFF",
   surfaceMuted: "#F8FBFF",
-  border: "#E2EAF2",
-  borderStrong: "#C7D6E4",
-  text: "#11263C",
-  textMuted: "#6D7E90",
-  textSoft: "#8CA0B3",
-  success: "#1E8C5D",
-  successSoft: "#DFF6EF",
-  warning: "#C67A12",
-  warningSoft: "#FFF0D9",
-  danger: "#C04444",
-  dangerSoft: "#FDE8E8",
-  info: "#22405F",
+  border: "#D7E1EC",
+  borderStrong: "#BDCBDA",
+  text: "#0F2238",
+  textMuted: "#5F7388",
+  textSoft: "#90A1B4",
+  success: "#1F8F65",
+  successSoft: "#E1F7EF",
+  warning: "#C17A17",
+  warningSoft: "#FFF3DF",
+  danger: "#C24D4D",
+  dangerSoft: "#FCE9E9",
+  info: "#173B60",
   white: "#FFFFFF",
-  overlay: "rgba(17, 38, 60, 0.45)",
-  shadow: "#0B1A2A",
+  overlay: "rgba(15, 34, 56, 0.55)",
+  shadow: "#08131F",
 };
 
 export const AppSpacing = {
@@ -35,6 +35,7 @@ export const AppSpacing = {
   "2xl": 24,
   "3xl": 32,
   "4xl": 40,
+  "5xl": 48,
 } as const;
 
 export const AppRadius = {
@@ -45,67 +46,69 @@ export const AppRadius = {
   pill: 999,
 } as const;
 
+export const AppFonts = {
+  regular: "Poppins_400Regular",
+  medium: "Poppins_500Medium",
+  semibold: "Poppins_600SemiBold",
+  bold: "Poppins_700Bold",
+  extrabold: "Poppins_800ExtraBold",
+} as const;
+
+const createType = (
+  fontFamily: string,
+  fontSize: number,
+  lineHeight: number,
+  color = AppPalette.text,
+  extra?: TextStyle
+) =>
+  ({
+    fontFamily,
+    fontSize,
+    lineHeight,
+    color,
+    ...extra,
+  }) satisfies TextStyle;
+
 export const AppTypography = {
-  eyebrow: {
-    fontSize: 12,
-    lineHeight: 16,
-    fontWeight: "600",
-    letterSpacing: 0.3,
-    color: AppPalette.textMuted,
-  } satisfies TextStyle,
-  bodySm: {
-    fontSize: 12,
-    lineHeight: 18,
-    color: AppPalette.textMuted,
-  } satisfies TextStyle,
-  body: {
-    fontSize: 14,
-    lineHeight: 20,
-    color: AppPalette.text,
-  } satisfies TextStyle,
-  titleSm: {
-    fontSize: 18,
-    lineHeight: 24,
-    fontWeight: "700",
-    color: AppPalette.text,
-  } satisfies TextStyle,
-  title: {
-    fontSize: 24,
-    lineHeight: 30,
-    fontWeight: "800",
-    color: AppPalette.text,
-  } satisfies TextStyle,
-  display: {
-    fontSize: 30,
-    lineHeight: 36,
-    fontWeight: "800",
-    letterSpacing: -0.4,
-    color: AppPalette.text,
-  } satisfies TextStyle,
-};
+  eyebrow: createType(AppFonts.semibold, 12, 18, AppPalette.textMuted, {
+    letterSpacing: 0.6,
+    textTransform: "uppercase",
+  }),
+  label: createType(AppFonts.medium, 12, 18, AppPalette.textMuted),
+  bodySm: createType(AppFonts.regular, 13, 20, AppPalette.textMuted),
+  body: createType(AppFonts.regular, 14, 22, AppPalette.text),
+  bodyStrong: createType(AppFonts.semibold, 14, 22, AppPalette.text),
+  titleSm: createType(AppFonts.semibold, 18, 26),
+  title: createType(AppFonts.bold, 24, 32),
+  display: createType(AppFonts.extrabold, 32, 40, AppPalette.text, {
+    letterSpacing: -0.8,
+  }),
+  metric: createType(AppFonts.extrabold, 28, 34),
+  button: createType(AppFonts.semibold, 15, 22, AppPalette.white),
+} as const;
 
 export const AppShadow = {
   sm: Platform.select<ViewStyle>({
     ios: {
       shadowColor: AppPalette.shadow,
-      shadowOffset: { width: 0, height: 8 },
+      shadowOffset: { width: 0, height: 10 },
       shadowOpacity: 0.06,
-      shadowRadius: 16,
+      shadowRadius: 18,
     },
     android: {
-      elevation: 2,
+      elevation: 3,
     },
     default: {},
   }) as ViewStyle,
   md: Platform.select<ViewStyle>({
     ios: {
       shadowColor: AppPalette.shadow,
-      shadowOffset: { width: 0, height: 12 },
-      shadowOpacity: 0.08,
-      shadowRadius: 22,
+      shadowOffset: { width: 0, height: 18 },
+      shadowOpacity: 0.1,
+      shadowRadius: 28,
     },
     android: {
-      elevation: 4,
+      elevation: 6,
     },
     default: {},
   }) as ViewStyle,
@@ -116,6 +119,7 @@ export const AppTheme = {
   spacing: AppSpacing,
   radius: AppRadius,
   typography: AppTypography,
+  fonts: AppFonts,
   shadow: AppShadow,
 } as const;
 
@@ -125,9 +129,9 @@ export const AppSurface = StyleSheet.create({
     backgroundColor: AppPalette.background,
   },
   page: {
-    paddingHorizontal: AppSpacing.lg,
-    paddingTop: AppSpacing.md,
-    paddingBottom: AppSpacing.xl,
+    paddingHorizontal: AppSpacing["2xl"],
+    paddingTop: AppSpacing.lg,
+    paddingBottom: AppSpacing["3xl"],
   },
   card: {
     backgroundColor: AppPalette.surface,
@@ -135,19 +139,20 @@ export const AppSurface = StyleSheet.create({
     borderWidth: 1,
     borderColor: AppPalette.border,
     padding: AppSpacing.lg,
+    ...AppShadow.sm,
   },
-  cardElevated: {
-    backgroundColor: AppPalette.surface,
+  cardMuted: {
+    backgroundColor: AppPalette.backgroundMuted,
     borderRadius: AppRadius.lg,
     borderWidth: 1,
     borderColor: AppPalette.border,
     padding: AppSpacing.lg,
-    ...AppShadow.sm,
   },
   heroCard: {
     backgroundColor: AppPalette.primary,
     borderRadius: AppRadius.xl,
     padding: AppSpacing.xl,
+    ...AppShadow.md,
   },
   input: {
     backgroundColor: AppPalette.surface,
@@ -155,7 +160,7 @@ export const AppSurface = StyleSheet.create({
     borderWidth: 1,
     borderColor: AppPalette.border,
     paddingHorizontal: AppSpacing.lg,
-    paddingVertical: 14,
+    paddingVertical: 16,
     color: AppPalette.text,
   },
 });
@@ -163,16 +168,16 @@ export const AppSurface = StyleSheet.create({
 export const Colors = {
   light: {
     text: AppPalette.text,
-    background: AppPalette.surface,
-    tint: AppPalette.accent,
+    background: AppPalette.background,
+    tint: AppPalette.primary,
     icon: AppPalette.textMuted,
     tabIconDefault: AppPalette.textSoft,
     tabIconSelected: AppPalette.primary,
   },
   dark: {
     text: AppPalette.text,
-    background: AppPalette.surface,
-    tint: AppPalette.accent,
+    background: AppPalette.background,
+    tint: AppPalette.primary,
     icon: AppPalette.textMuted,
     tabIconDefault: AppPalette.textSoft,
     tabIconSelected: AppPalette.primary,
@@ -181,27 +186,27 @@ export const Colors = {
 
 export const Fonts = Platform.select({
   ios: {
-    sans: "System",
+    sans: AppFonts.regular,
     serif: "Times New Roman",
-    rounded: "System",
+    rounded: AppFonts.medium,
     mono: "Menlo",
   },
   android: {
-    sans: "sans-serif",
+    sans: AppFonts.regular,
     serif: "serif",
-    rounded: "sans-serif-medium",
+    rounded: AppFonts.medium,
     mono: "monospace",
   },
   default: {
-    sans: "sans-serif",
+    sans: AppFonts.regular,
     serif: "serif",
-    rounded: "sans-serif",
+    rounded: AppFonts.medium,
     mono: "monospace",
   },
   web: {
-    sans: "'Avenir Next', 'Segoe UI', sans-serif",
+    sans: AppFonts.regular,
     serif: "Georgia, serif",
-    rounded: "'Avenir Next', 'Segoe UI', sans-serif",
+    rounded: AppFonts.medium,
     mono: "'SFMono-Regular', Consolas, monospace",
   },
 });

@@ -448,7 +448,7 @@ export default function DaftarHadir() {
                 onPress={()=>setSelectedKelas(item)}
               >
                 <View style={styles.cardIconWrap}>
-                  <Ionicons name="people-outline" size={22} color="#16324f" />
+                  <Ionicons name="people-outline" size={22} color={AppTheme.colors.primary} />
                 </View>
                 <Text style={styles.cardText}>{item}</Text>
                 <Text style={styles.cardCount}>{jumlahSiswa} siswa</Text>
@@ -566,7 +566,7 @@ export default function DaftarHadir() {
         <View style={styles.shell}>
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-          <Ionicons name="arrow-back" size={18} color="#6D3BFF" />
+          <Ionicons name="arrow-back" size={18} color={AppTheme.colors.primary} />
         </TouchableOpacity>
         <View style={styles.headerTextWrap}>
           <Text style={styles.eyebrow}>Daftar siswa</Text>
@@ -581,7 +581,7 @@ export default function DaftarHadir() {
             <Text style={styles.heroDate}>{formatTanggal(selectedDate)}</Text>
           </View>
           <TouchableOpacity style={styles.inlineCalendarButton} onPress={openCalendar}>
-            <Ionicons name="calendar-outline" size={18} color="#16324f" />
+            <Ionicons name="calendar-outline" size={18} color={AppTheme.colors.primary} />
           </TouchableOpacity>
         </View>
         <View style={styles.summaryRow}>
@@ -771,17 +771,17 @@ const styles = StyleSheet.create({
     flex:1,
   },
   container:{
-    paddingHorizontal:AppTheme.spacing.lg,
-    paddingTop:AppTheme.spacing.md,
-    paddingBottom:28,
+    paddingHorizontal:AppTheme.spacing["2xl"],
+    paddingTop:AppTheme.spacing.lg,
+    paddingBottom:AppTheme.spacing["3xl"],
   },
   shell:{
-    paddingBottom:8,
+    gap:AppTheme.spacing.lg,
   },
   header:{
     flexDirection:"row",
     alignItems:"center",
-    marginBottom:20
+    marginBottom:AppTheme.spacing.lg
   },
   backButton:{
     width:40,
@@ -792,23 +792,21 @@ const styles = StyleSheet.create({
     alignItems:"center"
   },
   headerTextWrap:{
-    marginLeft:12
+    marginLeft:AppTheme.spacing.md
   },
   eyebrow:{
-    color:AppTheme.colors.textMuted,
-    fontSize:12,
-    marginBottom:4
+    ...AppTheme.typography.eyebrow,
+    color:AppTheme.colors.primary,
+    marginBottom:AppTheme.spacing.xs
   },
   headerTitle:{
-    color:AppTheme.colors.text,
-    fontSize:24,
-    fontWeight:"800",
+    ...AppTheme.typography.title,
   },
   infoCard:{
     backgroundColor:AppTheme.colors.primary,
     borderRadius:AppTheme.radius.xl,
-    padding:18,
-    marginBottom:18,
+    padding:AppTheme.spacing.xl,
+    ...AppTheme.shadow.md,
   },
   infoHeaderCopy:{
     flex:1,
@@ -820,15 +818,13 @@ const styles = StyleSheet.create({
     alignItems:"flex-start",
   },
   infoTitle:{
+    ...AppTheme.typography.titleSm,
     color:AppTheme.colors.white,
-    fontSize:17,
-    fontWeight:"800"
   },
   infoText:{
-    marginTop:6,
+    ...AppTheme.typography.bodySm,
+    marginTop:AppTheme.spacing.xs,
     color:AppTheme.colors.primarySoft,
-    fontSize:13,
-    lineHeight:20
   },
   calendarHeader:{
     flexDirection:"row",
@@ -916,14 +912,15 @@ const styles = StyleSheet.create({
   card:{
     flexBasis:"48%",
     backgroundColor:AppTheme.colors.surface,
-    marginBottom:15,
+    marginBottom:AppTheme.spacing.lg,
     paddingVertical:26,
-    paddingHorizontal:16,
+    paddingHorizontal:AppTheme.spacing.lg,
     borderRadius:AppTheme.radius.xl,
     alignItems:"center",
     borderWidth:1,
     borderColor:AppTheme.colors.border,
     gap:8,
+    ...AppTheme.shadow.sm,
   },
   cardIconWrap:{
     width:52,
@@ -934,23 +931,19 @@ const styles = StyleSheet.create({
     justifyContent:"center",
   },
   cardText:{
-    color:AppTheme.colors.text,
-    fontSize:19,
-    fontWeight:"bold",
+    ...AppTheme.typography.titleSm,
     textAlign:"center",
   },
   cardCount:{
-    marginTop:8,
-    color:AppTheme.colors.textMuted,
-    fontSize:12,
-    fontWeight:"700",
+    ...AppTheme.typography.bodySm,
+    marginTop:AppTheme.spacing.xs,
   },
   heroCard:{
     backgroundColor:AppTheme.colors.primary,
     borderRadius:AppTheme.radius.xl,
-    padding:20,
-    marginBottom:14,
+    padding:AppTheme.spacing.xl,
     gap:8,
+    ...AppTheme.shadow.md,
   },
   heroTopRow:{
     flexDirection:"row",
@@ -979,9 +972,9 @@ const styles = StyleSheet.create({
   },
   heroDate:{
     color:AppTheme.colors.white,
-    fontSize:22,
-    fontWeight:"800",
-    lineHeight:30,
+    fontFamily:AppTheme.fonts.extrabold,
+    fontSize:24,
+    lineHeight:32,
   },
   summaryRow:{
     flexDirection:"row",
@@ -1005,7 +998,7 @@ const styles = StyleSheet.create({
     fontWeight:"800",
   },
   searchWrap:{
-    marginTop:6,
+    marginTop:AppTheme.spacing.xs,
     flexDirection:"row",
     alignItems:"center",
     backgroundColor:AppTheme.colors.surface,
@@ -1025,23 +1018,21 @@ const styles = StyleSheet.create({
   },
   row:{
     backgroundColor:AppTheme.colors.surface,
-    padding:16,
+    padding:AppTheme.spacing.lg,
     borderRadius:AppTheme.radius.md,
-    marginBottom:12,
+    marginBottom:AppTheme.spacing.md,
     borderWidth:1,
-    borderColor:AppTheme.colors.border
+    borderColor:AppTheme.colors.border,
+    ...AppTheme.shadow.sm,
   },
   nama:{
-    fontSize:18,
-    fontWeight:"600",
-    marginBottom:10,
-    color:AppTheme.colors.text
+    ...AppTheme.typography.titleSm,
+    marginBottom:AppTheme.spacing.sm,
   },
   statusInfo:{
+    ...AppTheme.typography.bodyStrong,
     color:AppTheme.colors.primary,
-    fontSize:13,
-    fontWeight:"600",
-    marginBottom:10,
+    marginBottom:AppTheme.spacing.sm,
   },
   statusInfoEmpty:{
     color:AppTheme.colors.textMuted,
@@ -1053,7 +1044,7 @@ const styles = StyleSheet.create({
   btn:{
     flex:1,
     paddingVertical:10,
-    marginHorizontal:3,
+    marginHorizontal:AppTheme.spacing.xs,
     borderRadius:AppTheme.radius.sm,
     backgroundColor:AppTheme.colors.primarySoft,
     alignItems:"center"
@@ -1069,7 +1060,7 @@ const styles = StyleSheet.create({
   },
   btnText:{
     color:AppTheme.colors.white,
-    fontWeight:"bold"
+    fontFamily:AppTheme.fonts.semibold
   },
   emptyState:{
     color:AppTheme.colors.textMuted,
@@ -1084,8 +1075,8 @@ const styles = StyleSheet.create({
     paddingHorizontal:14,
   },
   actionCard:{
-    marginBottom:18,
-    gap:10,
+    marginBottom:AppTheme.spacing.xl,
+    gap:AppTheme.spacing.sm,
   },
   secondaryAction:{
     flexDirection:"row",

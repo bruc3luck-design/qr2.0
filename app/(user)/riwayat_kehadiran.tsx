@@ -170,10 +170,10 @@ export default function RiwayatKehadiran() {
 
   const getStatusColor = (status: string | null | undefined) => {
     const normalized = String(status || "").toLowerCase()
-    if (normalized === "hadir") return "#22C55E"
-    if (normalized === "izin") return "#F59E0B"
-    if (normalized === "sakit") return "#EF4444"
-    return "#94A3B8"
+    if (normalized === "hadir") return AppTheme.colors.success
+    if (normalized === "izin") return AppTheme.colors.warning
+    if (normalized === "sakit") return AppTheme.colors.danger
+    return AppTheme.colors.textSoft
   }
 
   const getStatusLabel = (status: string | null | undefined) => {
@@ -202,7 +202,7 @@ export default function RiwayatKehadiran() {
           />
 
           {loading ? (
-            <ActivityIndicator size="large" color="#6D3BFF" style={{ marginTop: 40 }} />
+          <ActivityIndicator size="large" color={AppTheme.colors.primary} style={{ marginTop: 40 }} />
           ) : (
             <>
               <View style={styles.summaryCard}>
@@ -355,25 +355,23 @@ export default function RiwayatKehadiran() {
 
 const styles = StyleSheet.create({
   shell: {
-    paddingBottom: 8,
+    gap: AppTheme.spacing.lg,
   },
   summaryCard: {
     backgroundColor: AppTheme.colors.surface,
     borderRadius: AppTheme.radius.lg,
-    padding: 18,
-    marginBottom: 14,
+    padding: AppTheme.spacing.xl,
     borderWidth: 1,
     borderColor: AppTheme.colors.border,
+    ...AppTheme.shadow.sm,
   },
   summaryLabel: {
-    color: AppTheme.colors.textMuted,
-    marginBottom: 6,
+    ...AppTheme.typography.label,
+    marginBottom: AppTheme.spacing.xs,
   },
   summaryValue: {
-    color: AppTheme.colors.text,
-    fontSize: 24,
-    fontWeight: "800",
-    marginBottom: 14,
+    ...AppTheme.typography.title,
+    marginBottom: AppTheme.spacing.lg,
   },
   secondaryAction: {
     flexDirection: "row",
@@ -381,35 +379,32 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: AppTheme.colors.primarySoft,
     borderRadius: AppTheme.radius.sm,
-    paddingVertical: 12,
-    gap: 8,
+    paddingVertical: AppTheme.spacing.md,
+    gap: AppTheme.spacing.sm,
   },
   secondaryActionText: {
+    ...AppTheme.typography.bodyStrong,
     color: AppTheme.colors.primary,
-    fontWeight: "700",
   },
   detailCard: {
     backgroundColor: AppTheme.colors.surface,
     borderRadius: AppTheme.radius.lg,
-    padding: 18,
+    padding: AppTheme.spacing.xl,
     borderWidth: 1,
     borderColor: AppTheme.colors.border,
-    marginBottom: 14,
+    ...AppTheme.shadow.sm,
   },
   detailLabel: {
-    color: AppTheme.colors.textMuted,
-    fontSize: 12,
-    marginBottom: 4,
+    ...AppTheme.typography.label,
+    marginBottom: AppTheme.spacing.xs,
   },
   detailDate: {
-    color: AppTheme.colors.text,
-    fontSize: 16,
-    fontWeight: "800",
-    marginBottom: 10,
+    ...AppTheme.typography.titleSm,
+    marginBottom: AppTheme.spacing.sm,
   },
   detailTime: {
-    color: AppTheme.colors.textMuted,
-    marginTop: 10,
+    ...AppTheme.typography.bodySm,
+    marginTop: AppTheme.spacing.sm,
   },
   statusBadge: {
     alignSelf: "flex-start",
@@ -423,9 +418,10 @@ const styles = StyleSheet.create({
   calendarPreview: {
     backgroundColor: AppTheme.colors.surface,
     borderRadius: AppTheme.radius.lg,
-    padding: 16,
+    padding: AppTheme.spacing.lg,
     borderWidth: 1,
     borderColor: AppTheme.colors.border,
+    ...AppTheme.shadow.sm,
   },
   weekHeader: {
     flexDirection: "row",
@@ -472,7 +468,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: AppTheme.colors.overlay,
     justifyContent: "center",
-    padding: 20,
+    padding: AppTheme.spacing.xl,
   },
   modalHeader: {
     flexDirection: "row",
@@ -480,14 +476,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   modalEyebrow: {
-    color: AppTheme.colors.textMuted,
-    fontSize: 12,
-    marginBottom: 4,
+    ...AppTheme.typography.label,
+    marginBottom: AppTheme.spacing.xs,
   },
   modalTitle: {
-    color: AppTheme.colors.text,
-    fontSize: 20,
-    fontWeight: "800",
+    ...AppTheme.typography.title,
   },
   modalClose: {
     width: 36,
@@ -501,13 +494,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginTop: 16,
-    marginBottom: 14,
+    marginTop: AppTheme.spacing.lg,
+    marginBottom: AppTheme.spacing.md,
   },
   modalMonthTitle: {
-    color: AppTheme.colors.text,
-    fontSize: 15,
-    fontWeight: "800",
+    ...AppTheme.typography.bodyStrong,
   },
   calendarNav: {
     width: 36,
@@ -519,8 +510,8 @@ const styles = StyleSheet.create({
   },
   pickerRow: {
     flexDirection: "row",
-    gap: 10,
-    marginBottom: 14,
+    gap: AppTheme.spacing.sm,
+    marginBottom: AppTheme.spacing.md,
   },
   pickerWrap: {
     flex: 1,
